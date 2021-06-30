@@ -1,24 +1,21 @@
-# dashboard
+# Sleep Diary Dashboard
 
-## Project setup
-```
-yarn install
-```
+As part of the [Sleep Diary Project](https://sleepdiary.github.io/), this repository provides a dashboard to view your sleep diary.
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
+[Click here to view the dashboard](https://sleepdiary.github.io/dashboard)
 
-### Compiles and minifies for production
-```
-yarn build
-```
+## Compiling this project
 
-### Lints and fixes files
-```
-yarn lint
-```
+The included [`Dockerfile`](Dockerfile) describes our build environment.  To recompile the project, build and run the environment like this:
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+    docker build --tag sleepdiary-dashboard "/path/to/sleepdiary/dashboard"
+    docker run --rm -v "/path/to/sleepdiary/dashboard":/app sleepdiary-dashboard # run a development environment
+    docker run --rm -v "/path/to/sleepdiary/dashboard":/app sleepdiary-dashboard yarn build # build for production
+
+This is run automatically by [our GitHub Actions script](.github/workflows/main.yml).  If you fork this project on GitHub, the site itself should rebuild the project automatically whenever you push a change.
+
+## License
+
+Sleep Diary Dashboard, Copyright © 2021 Andrew Sayers <sleepdiary@pileofstuff.org>
+
+Sleep Diary Dashboard comes with ABSOLUTELY NO WARRANTY.  This is free software, and you are welcome to redistribute it under certain conditions.  For details, see [the license statement](LICENSE).

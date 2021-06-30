@@ -18,22 +18,27 @@ let session_storage = (() => {
      * So we manage diaries outside of Vue:
      */
     diaries = [],
-    permanent_callbacks = [],
+    permanent_callbacks = {},
     callbacks = [],
     init_waiting,
     init_callbacks = [],
     sentinel = {},
     id = 0,
     current_file,
+    call_callbacks = is_error => {
+        Object.values(permanent_callbacks).forEach( c => c(diaries.length == 1 && diary_strings.length == 0,is_error) );
+        callbacks.forEach( c => c(diaries.length == 1 && diary_strings.length == 0,is_error) );
+        callbacks.length = 0;
+    },
     diary_loader = new window.DiaryLoader(
         (diary,source) => {
+            if ( !diary.records.length ) return call_callbacks(true);
             current_file = 0;
             diaries.push([id++,diary,diary.format_info()]);
-            permanent_callbacks.forEach( c => c(diaries.length == 1 && diary_strings.length == 0) );
-            callbacks.forEach( c => c(diaries.length == 1 && diary_strings.length == 0) );
-            callbacks.length = 0;
-            if ( init_callbacks && !--init_waiting ) {
-                init_callbacks.forEach( c => c() );
+            call_callbacks(false);
+            if ( !source.search || source.search(/^hash/) ) --init_waiting;
+            if ( init_callbacks && !init_waiting ) {
+                init_callbacks.forEach( c => c(diaries.length == 1 && diary_strings.length == 0) );
                 init_callbacks = 0;
             }
             if ( source && source !== sentinel ) {
@@ -44,10 +49,7 @@ let session_storage = (() => {
             }
         },
         () => {
-            let fail = () => {
-                callbacks.forEach( c => c(diaries.length == 1 && diary_strings.length == 0,true) );
-                callbacks.length = 0;
-            },
+            let fail = () => call_callbacks(true),
                 file = current_file;
             current_file = 0;
             if ( window.preprocess_activity_log && window.Promise ) {
@@ -85,7 +87,7 @@ export default {
         if ( init_callbacks ) {
             init_callbacks.push(c);
         } else {
-            c(diaries.length);
+            c(diaries.length == 1 && diary_strings.length == 0);
         }
     },
     get_diaries() { return diaries; },
@@ -96,7 +98,9 @@ export default {
         return ret;
     },
     add_callback(c) { callbacks.push(c); },
-    add_permanent_callback(c) { permanent_callbacks.push(c); },
+    add_permanent_callback(key,cb) {
+        permanent_callbacks[key] = cb;
+    },
     add_diary(event) {
         diary_loader.load(event);
         current_file = event.target.files[0];
@@ -107,10 +111,13 @@ export default {
                 diaries.splice(n,1);
                 diary_strings.splice(n,1);
                 session_storage.setItem('dashboard.diary',diary_strings.join("\n"));
-                permanent_callbacks.forEach( c => c(diaries.length == 1 && diary_strings.length == 0) );
+                call_callbacks(false);
                 return;
             }
         }
+    },
+    clear() {
+        session_storage.removeItem('dashboard.diary');
     },
 
 };
