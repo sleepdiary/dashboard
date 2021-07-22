@@ -6,7 +6,11 @@ module.exports = {
       .tap(args => {
         args[0].title = 'Sleep Diary Dashboard';
         return args;
-      })
+      });
+    config
+      .performance
+        .maxEntrypointSize(1e6)
+        .maxAssetSize(1e6);
   },
   // Ignore hidden files:
   configureWebpack: {
