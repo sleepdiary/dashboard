@@ -21,7 +21,7 @@
                 </v-list-item>
 
                 <v-list-item
-                    :href="project_url+'dashboard/LICENSE'"
+                    :href="project_url+'dashboard/blob/main/LICENSE'"
                 >
                     <v-list-item-icon>
                         <v-icon>mdi-license</v-icon>
