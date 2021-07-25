@@ -2,7 +2,7 @@
 
 As part of the [Sleep Diary Project](https://sleepdiary.github.io/), this repository provides a dashboard to view your sleep diary.
 
-[Click here to view the dashboard](https://sleepdiary.github.io/dashboard)
+[Click here to use the dashboard](https://sleepdiary.github.io/dashboard)
 
 ## Compiling this project
 
