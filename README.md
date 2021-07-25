@@ -12,7 +12,7 @@ The included [`Dockerfile`](Dockerfile) describes our build environment.  To rec
     docker run --rm -v "/path/to/sleepdiary/dashboard":/app sleepdiary-dashboard # run a development environment
     docker run --rm -v "/path/to/sleepdiary/dashboard":/app sleepdiary-dashboard yarn build # build for production
 
-This is run automatically by [our GitHub Actions script](.github/workflows/main.yml).  If you fork this project on GitHub, the site itself should rebuild the project automatically whenever you push a change.
+This is run automatically by [our GitHub Actions script](.github/workflows/main.yml).  If you fork this project on GitHub, [enable GitHub Actions](https://docs.github.com/en/actions/managing-workflow-runs/disabling-and-enabling-a-workflow) to rebuild the project automatically whenever you push a change.
 
 ## License
 
