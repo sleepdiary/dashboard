@@ -5,6 +5,7 @@ module.exports = {
       .plugin('html')
       .tap(args => {
         args[0].title = 'Sleep Diary Dashboard';
+        args[0].script_url = process.env.VUE_APP_SCRIPT_URL;
         return args;
       });
     config

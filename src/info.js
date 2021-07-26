@@ -1,7 +1,7 @@
 self.importScripts(
-    "/library/sleepdiary-library.min.js",
-    "/report/sleepdiary-report.min.js",
-    "/info/sleepdiary-info.min.js"
+    process.env.VUE_APP_SCRIPT_URL + "library/sleepdiary-library.min.js",
+    process.env.VUE_APP_SCRIPT_URL + "report/sleepdiary-report.min.js",
+    process.env.VUE_APP_SCRIPT_URL + "info/sleepdiary-info.min.js"
 );
 
 var timezone,
