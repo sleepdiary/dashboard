@@ -1,12 +1,12 @@
-importScripts(
-    "../library/sleepdiary-library.min.js",
-    "../report/sleepdiary-report.min.js",
-    "../info/sleepdiary-info.min.js"
+self.importScripts(
+    "/library/sleepdiary-library.min.js",
+    "/report/sleepdiary-report.min.js",
+    "/info/sleepdiary-info.min.js"
 );
 
 var timezone,
     diary_loader = new self.DiaryLoader(
-        (diary,source) => {
+        diary => {
 
             postMessage([0,5]);
 
