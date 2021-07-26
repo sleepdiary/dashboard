@@ -11,6 +11,13 @@ module.exports = {
       .performance
         .maxEntrypointSize(1e6)
         .maxAssetSize(1e6);
+    config
+      .module
+        .rule('worker')
+        .test(/worker\.js$/)
+        .use('worker-loader')
+          .loader('worker-loader')
+      .end()
   },
   // Ignore hidden files:
   configureWebpack: {

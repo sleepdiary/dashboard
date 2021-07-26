@@ -165,6 +165,7 @@
 
  import diary_manager from "@/diary_manager.js";
  import { WIKI_URL } from "@/constants.js";
+ import Worker from 'worker-loader!@/info';
 
  const ONE_HOUR = 1000*60*60;
 
@@ -192,7 +193,7 @@
          asleep_at: 0,
          day_length: 0,
          wiki_url: WIKI_URL,
-         worker: new Worker('info-worker.js'),
+         worker: new Worker(),
      }),
 
      mounted() {
