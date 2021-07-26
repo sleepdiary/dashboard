@@ -12,7 +12,7 @@
                 <v-list-item>
                     <v-list-item-content>
 
-                        <v-simple-table v-if="recent">
+                        <v-simple-table v-if="recent_began">
                             <template v-slot:default>
 
                                 <thead>
