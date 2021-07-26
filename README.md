@@ -4,10 +4,30 @@ As part of the [Sleep Diary Project](https://sleepdiary.github.io/), this reposi
 
 [Click here to use the dashboard](https://sleepdiary.github.io/dashboard)
 
-## Compiling this project
+## Run locally
+
+### Using yarn
+
+**Install dependencies:**
+```
+yarn
+```
+
+**Start the development server:**
+```
+yarn serve
+```
+
+**Build the website for production:**
+```
+yarn build
+```
+
+### Using Docker
 
 The included [`Dockerfile`](Dockerfile) describes our build environment.  To recompile the project, build and run the environment like this:
 
+    yarn # installing dependencies
     docker build --tag sleepdiary-dashboard "/path/to/sleepdiary/dashboard"
     docker run --rm -v "/path/to/sleepdiary/dashboard":/app sleepdiary-dashboard # run a development environment
     docker run --rm -v "/path/to/sleepdiary/dashboard":/app sleepdiary-dashboard yarn build # build for production
