@@ -1,3 +1,3 @@
 FROM node
 WORKDIR /app
-CMD yarn serve
+CMD [ "sh", "-c", "yarn && yarn serve" ]
