@@ -9,8 +9,8 @@ As part of the [Sleep Diary Project](https://sleepdiary.github.io/), this reposi
 The included [`Dockerfile`](Dockerfile) describes our build environment.  To recompile the project, build and run the environment like this:
 
     docker build --tag sleepdiary-dashboard "/path/to/sleepdiary/dashboard"
-    docker run --rm -v "/path/to/sleepdiary/dashboard":/app sleepdiary-dashboard # run a development environment
-    docker run --rm -v "/path/to/sleepdiary/dashboard":/app sleepdiary-dashboard yarn build # build for production
+    docker run --rm -it -v "/path/to/sleepdiary/dashboard":/app sleepdiary-dashboard # run a development environment
+    docker run --rm -it -v "/path/to/sleepdiary/dashboard":/app sleepdiary-dashboard yarn build # build for production
 
 This is run automatically by [our GitHub Actions script](.github/workflows/main.yml).  If you fork this project on GitHub, [enable GitHub Actions](https://docs.github.com/en/actions/managing-workflow-runs/disabling-and-enabling-a-workflow) to rebuild the project automatically whenever you push a change.
 
