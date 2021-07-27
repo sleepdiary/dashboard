@@ -18,6 +18,6 @@ If you also want to use your own versions of other Sleep Diary libraries, edit [
 
 ## License
 
-Sleep Diary Dashboard, Copyright © 2021 Andrew Sayers <sleepdiary@pileofstuff.org>
+Sleep Diary Dashboard, Copyright © 2021 Sleepdiary Developers <sleepdiary@pileofstuff.org>
 
 Sleep Diary Dashboard comes with ABSOLUTELY NO WARRANTY.  This is free software, and you are welcome to redistribute it under certain conditions.  For details, see [the license statement](LICENSE).
