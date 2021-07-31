@@ -1,3 +1,8 @@
+# Build the project
+#
+# See also:
+# Caching workflows: https://docs.github.com/en/actions/guides/caching-dependencies-to-speed-up-workflows
+
 name: build
 
 on:
@@ -18,13 +23,17 @@ jobs:
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
       - uses: actions/setup-node@v1
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
           ref: built
-      - name: Build docs
-        run: ./bin/build.sh
+      - name: Build
+        uses: docker://ghcr.io/sleepdiary/builder:latest
+        with:
+          args: merge-and-push
         env:
           GIT_AUTHOR_NAME: "Automatic updater [bot]"
           GIT_AUTHOR_EMAIL: "sleepdiary-bot@pileofstuff.org"

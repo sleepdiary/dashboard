@@ -4,17 +4,20 @@ As part of the [Sleep Diary Project](https://sleepdiary.github.io/), this reposi
 
 [Click here to use the dashboard](https://sleepdiary.github.io/dashboard)
 
-## Compiling this project
+## Developing the project
 
-The included [`Dockerfile`](Dockerfile) describes our build environment.  To recompile the project, build and run the environment like this:
+To work on the dashboard, you will need a development environment.  The recommended solution is to [install Docker](https://docs.docker.com/get-started/) and do:
 
-    docker build --tag sleepdiary-dashboard "/path/to/sleepdiary/dashboard"
-    docker run --rm -it -p some_port:8080 -v "/path/to/sleepdiary/dashboard":/app sleepdiary-dashboard # run a development environment
-    docker run --rm -it -v "/path/to/sleepdiary/dashboard":/app sleepdiary-dashboard yarn build # build for production
+    # build and test:
+    docker run --rm -it -v "/path/to/sleepdiary/report":/app sleepdiaryproject/builder
+    # build but don't test:
+    docker run --rm -it -v "/path/to/sleepdiary/report":/app sleepdiaryproject/builder build
+    # run the development environment, listening on http://localhost:some_port/
+    docker run --rm -it -v "/path/to/sleepdiary/report":/app -p some_port:8080 sleepdiaryproject/builder run
 
 Most people set `some_port` in the second line to `8080`, but you can use another port if you prefer.  For example, you might want to run two instances of the project and compare their behaviour.
 
-This is run automatically by [our GitHub Actions script](.github/workflows/main.yml).  If you fork this project on GitHub, [enable GitHub Actions](https://docs.github.com/en/actions/managing-workflow-runs/disabling-and-enabling-a-workflow) to rebuild the project automatically whenever you push a change.
+If you fork this project on GitHub, you can [enable GitHub Actions](https://docs.github.com/en/actions/managing-workflow-runs/disabling-and-enabling-a-workflow) to rebuild the project automatically whenever you push a change.  Then if you [enable GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site), your site will be available online.
 
 If you also want to use your own versions of other Sleep Diary libraries, edit [`.env`](.env) to point to wherever you keep them.
 
