@@ -1,0 +1,41 @@
+# Build the project
+#
+# See also:
+# Caching workflows: https://docs.github.com/en/actions/guides/caching-dependencies-to-speed-up-workflows
+
+name: build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: built
+      - name: Build
+        uses: docker://ghcr.io/sleepdiary/builder:latest
+        with:
+          args: merge-and-push
+        env:
+          GIT_AUTHOR_NAME: "Automatic updater [bot]"
+          GIT_AUTHOR_EMAIL: "sleepdiary-bot@pileofstuff.org"
+          GIT_COMMITTER_NAME: "Automatic updater [bot]"
+          GIT_COMMITTER_EMAIL: "sleepdiary-bot@pileofstuff.org"
