@@ -105,11 +105,13 @@
 
 <script>
 
- import router from "./router/index.js";
+import "@fontsource/roboto";
 
- import diary_manager from "@/diary_manager.js";
+import router from "./router/index.js";
 
- import { PROJECT_URL } from "@/constants.js";
+import diary_manager from "@/diary_manager.js";
+
+import { PROJECT_URL } from "@/constants.js";
 
 export default {
 

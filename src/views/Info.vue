@@ -163,6 +163,8 @@
 
 <script>
 
+ import { jsPDF } from "jspdf";
+ import ExcelJS from "exceljs";
  import diary_manager from "@/diary_manager.js";
  import { WIKI_URL } from "@/constants.js";
  import Worker from 'worker-loader!@/info';
@@ -283,7 +285,7 @@
 
          generate_predictions() {
              window.prediction_spreadsheet(
-                 new window.ExcelJS.Workbook(),
+                 new ExcelJS.Workbook(),
                  this.recent
              ).xlsx.writeBuffer().then(
                  buffer => this.download_item(
@@ -296,7 +298,7 @@
          generate_report() {
 
              const report = window.sleepdiary_report({
-                 pdf: new window.jspdf.jsPDF(),
+                 pdf: new jsPDF(),
                  timezone: this.timezone,
                  software_version: this.software_version,
                  recent: this.recent,
