@@ -22,4 +22,3 @@ pnpm-debug.log*
 *.sw?
 
 # Files that are only used in the "built" branch
-/docs
