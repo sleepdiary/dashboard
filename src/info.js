@@ -1,5 +1,5 @@
 self.importScripts(
-    process.env.VUE_APP_SCRIPT_URL + "library/sleepdiary-library.min.js",
+    process.env.VUE_APP_SCRIPT_URL + "core/sleepdiary-core.min.js",
     process.env.VUE_APP_SCRIPT_URL + "report/sleepdiary-report.min.js",
     process.env.VUE_APP_SCRIPT_URL + "info/sleepdiary-info.min.js"
 );
