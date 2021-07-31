@@ -1,6 +1,5 @@
 .DS_Store
 node_modules
-/docs
 
 
 # local env files
@@ -21,3 +20,6 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Files that are only used in the "built" branch
+/docs
