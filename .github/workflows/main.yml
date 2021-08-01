@@ -25,11 +25,11 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
-      - uses: actions/setup-node@v2.3.0
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
           ref: built
+      - uses: actions/setup-node@v2.3.0
       - name: Build
         uses: docker://ghcr.io/sleepdiary/builder:latest
         with:
