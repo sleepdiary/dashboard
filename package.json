@@ -1,13 +1,19 @@
 {
-  "name": "dashboard",
+  "name": "@sleepdiary/dashboard",
+  "description": "Graphs and statistics about your sleeping pattern",
   "version": "0.1.0",
+  "homepage": "https://github.com/sleepdiary/dashboard",
+  "bugs": "https://github.com/sleepdiary/dashboard/issues",
+  "repository": "github:sleepdiary/dashboard",
   "private": true,
+  "license": "GPL-2.0-only",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@sleepdiary/core": "^0.1.0",
     "core-js": "^3.6.5",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
@@ -46,5 +52,16 @@
     "> 1%",
     "last 2 versions",
     "not dead"
+  ],
+  "keywords": [
+    "sleep",
+    "sleep-analysis",
+    "sleep-diary",
+    "sleep-format",
+    "circadian",
+    "circadian-rhythm",
+    "circadian-rhythm-disorder",
+    "sleep-disorders",
+    "sleep-tools"
   ]
 }
