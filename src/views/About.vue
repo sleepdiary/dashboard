@@ -24,7 +24,7 @@
                     :href="project_url+'dashboard/blob/main/LICENSE'"
                 >
                     <v-list-item-icon>
-                        <v-icon>mdi-license</v-icon>
+                        <v-icon>mdi-copyright</v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
                         <v-list-item-title>License</v-list-item-title>
