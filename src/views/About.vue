@@ -13,7 +13,7 @@
                     :href="project_url+'dashboard'"
                 >
                     <v-list-item-icon>
-                        <v-icon>mdi-github</v-icon>
+                        <v-icon>mdi-code-tags</v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
                         <v-list-item-title>Source code</v-list-item-title>
