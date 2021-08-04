@@ -1,0 +1,39 @@
+# Run tests when a pull request is received
+#
+# Note: As of 2021-08-04, GitHub Actions has no good way to reply to PRs.
+# Here are some links that might help:
+# * https://github.community/t/github-actions-are-severely-limited-on-prs/18179#M9249
+#   * people complaining about this issue, some have interesting workarounds
+# * https://github.com/mshick/add-pr-comment
+#   * one (partial) solution
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: built
+      - uses: actions/setup-node@v2.3.0
+      - name: Run tests
+        id: run_tests
+        uses: docker://ghcr.io/sleepdiary/builder:latest
+        with:
+          args: automated-test
