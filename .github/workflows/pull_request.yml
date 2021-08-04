@@ -7,6 +7,8 @@
 # * https://github.com/mshick/add-pr-comment
 #   * one (partial) solution
 
+name: Check incoming PRs
+
 on:
   pull_request:
     branches:

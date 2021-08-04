@@ -3,7 +3,7 @@
 # See also:
 # Caching workflows: https://docs.github.com/en/actions/guides/caching-dependencies-to-speed-up-workflows
 
-name: build
+name: Merge and push
 
 on:
   push:
