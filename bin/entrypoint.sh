@@ -4,7 +4,7 @@ SLEEPDIARY_NAME=dashboard
 NEEDS_PORT=1
 
 cmd_build() {
-    yarn --frozen-lockfile && yarn build --dest docs
+    yarn --frozen-lockfile && yarn build --dest docs --no-clean
 }
 
 cmd_test() {
