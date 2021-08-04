@@ -3,7 +3,7 @@
 # See also:
 # Caching workflows: https://docs.github.com/en/actions/guides/caching-dependencies-to-speed-up-workflows
 
-name: build
+name: Merge and push
 
 on:
   push:
@@ -29,7 +29,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: built
-      - uses: actions/setup-node@v2.3.0
+      - uses: actions/setup-node@v2.3.1
       - name: Build
         uses: docker://ghcr.io/sleepdiary/builder:latest
         with:
