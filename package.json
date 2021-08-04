@@ -61,6 +61,7 @@
     "circadian-rhythm",
     "circadian-rhythm-disorder",
     "sleep-disorders",
-    "sleep-tools"
+    "sleep-tools",
+    "dashboard"
   ]
 }
