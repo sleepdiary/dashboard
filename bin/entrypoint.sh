@@ -13,7 +13,7 @@ cmd_test() {
 
 }
 
-cmd_run() {
+cmd_serve() {
     yarn --frozen-lockfile && yarn serve
 }
 
