@@ -8,9 +8,11 @@
   "private": true,
   "license": "GPL-2.0-only",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "build": "./bin/run.sh build",
+    "force-build": "./bin/run.sh build --force",
+    "test": "./bin/run.sh test",
+    "lint": "./bin/run.sh test",
+    "serve": "./bin/run.sh serve"
   },
   "dependencies": {
     "core-js": "^3.6.5",
