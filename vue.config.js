@@ -33,5 +33,13 @@ module.exports = {
   ],
   publicPath: process.env.NODE_ENV === 'production'
   ? '/dashboard/'
-  : '/',
+  : './',
+  devServer: (
+    process.env.VUE_APP_DEV_SERVER
+    ? {
+      disableHostCheck: true,
+      public: process.env.VUE_APP_DEV_SERVER,
+    }
+    : undefined
+  ),
 }
