@@ -4,25 +4,22 @@ As part of the [Sleep Diary Project](https://sleepdiary.github.io/), this reposi
 
 [Click here to use the dashboard](https://sleepdiary.github.io/dashboard)
 
-## Developing the project
+## Get Involved
 
-To work on the dashboard, you will need a development environment.  The recommended solution is to [install Docker](https://docs.docker.com/get-started/) and do:
+### I found a bug, how should I tell you?
 
-    # build and test:
-    docker run --rm -it -v "/path/to/sleepdiary/report":/app sleepdiaryproject/builder
-    # build but don't test:
-    docker run --rm -it -v "/path/to/sleepdiary/report":/app sleepdiaryproject/builder build
-    # run the development environment, listening on http://localhost:some_port/
-    docker run --rm -it -v "/path/to/sleepdiary/report":/app -p some_port:8080 sleepdiaryproject/builder run
+[Create a new bug report](https://github.com/sleepdiary/dashboard/issues/new?assignees=&labels=&template=bug_report.md&title=) and we'll get right on it.
 
-Most people set `some_port` in the second line to `8080`, but you can use another port if you prefer.  For example, you might want to run two instances of the project and compare their behaviour.
+### I'd like to request a new feature, what should I say?
 
-If you fork this project on GitHub, you can [enable GitHub Actions](https://docs.github.com/en/actions/managing-workflow-runs/disabling-and-enabling-a-workflow) to rebuild the project automatically whenever you push a change.  Then if you [enable GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site), your site will be available online.
+Please [create a new feature request](https://github.com/sleepdiary/dashboard/issues/new?assignees=&labels=&template=feature_request.md&title=).  We'll try to sort out your problem.
 
-If you also want to use your own versions of other Sleep Diary libraries, edit [`.env`](.env) to point to wherever you keep them.
+### I'd like to change the code, how do I get started?
+
+Take a look at our [getting started guide](https://github.com/sleepdiary/docs/blob/main/development/getting-started.md).  Or if you'd like to talk to someone first, [open a discussion](https://github.com/sleepdiary/sleepdiary.github.io/discussions) and describe what you're planning.
 
 ## License
 
-Sleep Diary Dashboard, Copyright © 2021 Sleepdiary Developers <sleepdiary@pileofstuff.org>
+Sleep Diary Dashboard, Copyright © 2021 [Sleepdiary Developers](mailto:sleepdiary@pileofstuff.org)
 
 Sleep Diary Dashboard comes with ABSOLUTELY NO WARRANTY.  This is free software, and you are welcome to redistribute it under certain conditions.  For details, see [the license statement](LICENSE).
