@@ -33,7 +33,6 @@ jobs:
         with:
           fetch-depth: 0
           ref: built
-      - uses: actions/setup-node@v2.3.0
       - name: Run tests
         id: run_tests
         uses: docker://ghcr.io/sleepdiary/builder:latest
