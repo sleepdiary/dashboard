@@ -1,0 +1,20 @@
+name: Planned maintenance
+
+on: pull_request
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    name: Is this branch allowed at this time?
+    steps:
+      - name: Get maintenance window
+        id: settings
+        uses: sleepdiary/planned-maintenance-times@main
+      - name: Is now a good time?
+        id: check
+        uses: andrew-sayers/planned-maintenance@v1.0.0
+        with:
+          branch-regexp: ${{ steps.settings.outputs.branch-regexp }}
+          maintenance-window-start: ${{ steps.settings.outputs.maintenance-window-start }}
+          maintenance-window-end: ${{ steps.settings.outputs.maintenance-window-end }}
+          maintenance-url: ${{ steps.settings.outputs.maintenance-url }}
