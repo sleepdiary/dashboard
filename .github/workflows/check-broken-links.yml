@@ -1,0 +1,19 @@
+name: Check markdown links
+on:
+  schedule:
+    # if some external link breaks during the day,
+    # make sure there's a report available in the morning:
+    - cron: "14 6 * * *"
+  workflow_dispatch:
+  push:
+
+jobs:
+  check-broken-links:
+    name: Check broken links
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check
+        uses: ruzickap/action-my-broken-link-checker@v2.2.4
+        with:
+          url: https://sleepdiary.github.io/dashboard/
+          cmd_params: "--one-page-only --color=always"
