@@ -3,18 +3,18 @@ const https = require('https'),
 ;
 
 let files = 0,
-    result = 0
+    overall_result = 0
 ;
 
-function check( result, message ) {
-    if ( result ) {
+function check( process_result, message ) {
+    if ( process_result ) {
         console.log(`ok ${message}`);
     } else {
         console.log(`not ok ${message}`);
-        result = 2;
+        overall_result = 2;
     }
     if ( !--files ) {
-        process.exit(result);
+        process.exit(overall_result);
     }
 }
 
