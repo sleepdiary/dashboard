@@ -8,11 +8,19 @@ fi
 case "$1" in
 
     build)
-        npm ci --silent && npx vue-cli-service build --dest docs --no-clean
+        npm ci --silent || exit 2
+        npx vue-cli-service build --dest docs --no-clean
         ;;
 
     test)
         npx vue-cli-service lint
+        echo
+        if ! node bin/check-urls.js
+        then
+            echo
+            echo "This build will generate some invalid URLs."
+            exit 2
+        fi
         generic_tests
         exit "$WARNED"
         ;;
