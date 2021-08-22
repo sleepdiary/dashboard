@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 if [ -e /opt/sleepdiary/utils.sh ]
 then . /opt/sleepdiary/utils.sh
 else printf '\033[1;31m/opt/sleepdiary/utils.sh not found - some checks bypassed.\033[0m\n'
