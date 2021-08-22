@@ -25,7 +25,7 @@ case "$1" in
         ;;
 
     serve)
-        npm ci && npx vue-cli-service serve
+        npx vue-cli-service serve
         ;;
 
     upgrade)
