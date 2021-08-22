@@ -8,7 +8,6 @@ fi
 case "$1" in
 
     build)
-        npm ci --silent || exit 2
         npx vue-cli-service build --dest docs --no-clean
         ;;
 
