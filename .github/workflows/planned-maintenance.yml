@@ -9,10 +9,10 @@ jobs:
     steps:
       - name: Get maintenance window
         id: settings
-        uses: sleepdiary/planned-maintenance-times@main
+        uses: sleepdiary/planned-maintenance-info@main
       - name: Is now a good time?
         id: check
-        uses: andrew-sayers/planned-maintenance@v1.0.0
+        uses: andrew-sayers/planned-maintenance@v2.0.0
         with:
           branch-regexp: ${{ steps.settings.outputs.branch-regexp }}
           maintenance-window-start: ${{ steps.settings.outputs.maintenance-window-start }}
