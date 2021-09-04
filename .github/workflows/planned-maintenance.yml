@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Get maintenance window
         id: settings
-        uses: sleepdiary/planned-maintenance-times@main
+        uses: sleepdiary/planned-maintenance-info@main
       - name: Is now a good time?
         id: check
         uses: andrew-sayers/planned-maintenance@v1.0.0
