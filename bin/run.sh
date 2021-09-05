@@ -32,6 +32,8 @@ case "$1" in
 
     upgrade)
         npm upgrade
+        rm -f yarn.lock
+        yarn import
         ;;
 
     *)
