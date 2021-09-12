@@ -94,7 +94,7 @@
                                 <v-tabs-items v-model="sleep_chart_tab">
                                     <v-tab-item :transition="false" value="root">
 
-                                        <v-list>
+                                        <v-list flat>
                                             <v-list-item @click.stop="sleep_chart_tab='theme'">
                                                 <v-list-item-icon><v-icon>mdi-theme-light-dark</v-icon></v-list-item-icon>
                                                 <v-list-item-content><v-list-item-title>Theme: {{sleep_chart_theme}}</v-list-item-title></v-list-item-content>
@@ -211,7 +211,125 @@
                     </v-list-item>
 
                     <template v-if="event_svg">
-                        <v-subheader>Sleep-related events</v-subheader>
+                        <v-subheader>
+                            Sleep-related events
+                            <v-spacer></v-spacer>
+
+                            <v-menu
+                              bottom
+                              left
+                            >
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-btn
+                                      dark
+                                      icon
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      @click="event_graph_tab='root'"
+                                    >
+                                        <v-icon>mdi-dots-vertical</v-icon>
+                                    </v-btn>
+                                </template>
+
+                                <v-tabs
+                                  v-model="event_graph_tab"
+                                  style="width:270px"
+                                  height="0"
+                                >
+                                    <v-tabs-items v-model="event_graph_tab">
+                                        <v-tab-item :transition="false" value="root">
+
+                                            <v-list flat>
+                                                <v-list-item @click.stop="event_graph_tab='theme'">
+                                                    <v-list-item-icon><v-icon>mdi-theme-light-dark</v-icon></v-list-item-icon>
+                                                    <v-list-item-content><v-list-item-title>Theme: {{event_graph_theme}}</v-list-item-title></v-list-item-content>
+                                                    <v-list-item-action>
+                                                        <v-icon color="grey lighten-1">mdi-chevron-right</v-icon>
+                                                    </v-list-item-action>
+                                                </v-list-item>
+
+                                                <v-list-item @click.stop="event_graph_tab='lines'">
+                                                    <v-list-item-icon><v-icon>mdi-chart-timeline-variant-shimmer</v-icon></v-list-item-icon>
+                                                    <v-list-item-content><v-list-item-title>Show {{event_graph_lines.length}} lines</v-list-item-title></v-list-item-content>
+                                                    <v-list-item-action>
+                                                        <v-icon color="grey lighten-1">mdi-chevron-right</v-icon>
+                                                    </v-list-item-action>
+                                                </v-list-item>
+                                            </v-list>
+                                        </v-tab-item>
+
+                                        <v-tab-item :transition="false" value="theme">
+                                            <v-toolbar flat>
+                                                <v-btn icon @click.stop="event_graph_tab = 'root'">
+                                                    <v-icon>mdi-arrow-left</v-icon>
+                                                </v-btn>
+
+                                                <v-toolbar-title>Choose theme</v-toolbar-title>
+                                            </v-toolbar>
+                                            <v-divider/>
+                                            <v-list>
+                                                <v-list-item-group v-model="event_graph_theme">
+                                                    <v-list-item value="dark">
+                                                        <v-list-item-content>
+                                                            <v-list-item-title>Dark</v-list-item-title>
+                                                            <v-list-item-subtitle>Easier to view in bed</v-list-item-subtitle>
+                                                        </v-list-item-content>
+                                                    </v-list-item>
+                                                    <v-list-item value="light">
+                                                        <v-list-item-content>
+                                                            <v-list-item-title>Light</v-list-item-title>
+                                                            <v-list-item-subtitle>Looks better in print</v-list-item-subtitle>
+                                                        </v-list-item-content>
+                                                    </v-list-item>
+                                                </v-list-item-group>
+                                            </v-list>
+                                        </v-tab-item>
+
+                                        <v-tab-item :transition="false" value="lines">
+                                            <v-toolbar flat>
+                                                <v-btn icon @click.stop="event_graph_tab = 'root'">
+                                                    <v-icon>mdi-arrow-left</v-icon>
+                                                </v-btn>
+
+                                                <v-toolbar-title>Show lines</v-toolbar-title>
+                                            </v-toolbar>
+                                            <v-divider/>
+                                            <v-list flat>
+                                                <v-list-item-group
+                                                  v-model="event_graph_lines"
+                                                  multiple
+                                                >
+                                                    <template
+                                                      v-for="line in event_graph_line_names"
+                                                    >
+                                                        <v-list-item
+                                                          :key="line"
+                                                          @click.stop=""
+                                                          :value="line"
+                                                        >
+                                                            <template v-slot:default="{ active }">
+                                                                <v-list-item-action>
+                                                                    <v-checkbox
+                                                                      :input-value="active"
+                                                                    />
+                                                                </v-list-item-action>
+
+                                                                <v-list-item-content>
+                                                                    <v-list-item-title>Show {{event_graph_line_title[line]}}</v-list-item-title>
+                                                                </v-list-item-content>
+                                                            </template>
+                                                        </v-list-item>
+                                                    </template>
+                                                </v-list-item-group>
+                                            </v-list>
+                                        </v-tab-item>
+
+                                    </v-tabs-items>
+                                </v-tabs>
+
+                            </v-menu>
+
+                        </v-subheader>
                         <v-list-item>
                             <v-list-item-content v-html="event_svg" @click="show_svg(event_svg,'Sleep-related events')" />
                         </v-list-item>
@@ -336,6 +454,16 @@
          sleep_chart_theme: 'dark',
          sleep_chart_start: 64800000,
          sleep_chart_reverse: true,
+         event_graph_tab: 'root',
+         event_graph_theme: 'dark',
+         event_graph_lines: ["wake","asleep","sleep","day-length"],
+         event_graph_line_names: ["wake","asleep","sleep","day-length"],
+         event_graph_line_title: {
+           "wake": 'wake times',
+           "asleep": 'asleep times',
+           "sleep": 'total sleep times',
+           "day-length": 'day lengths',
+         },
      }),
 
      mounted() {
@@ -390,6 +518,8 @@
          sleep_chart_theme  () { this.update_settings(); },
          sleep_chart_start  () { this.update_settings(); },
          sleep_chart_reverse() { this.update_settings(); },
+         event_graph_theme  () { this.update_settings(); },
+         event_graph_lines  () { this.update_settings(); },
      },
 
      methods: {
@@ -508,6 +638,8 @@
                  this.sleep_chart_theme,
                  this.sleep_chart_start,
                  this.sleep_chart_reverse,
+                 this.event_graph_theme,
+                 this.event_graph_lines,
              ]);
          },
 
