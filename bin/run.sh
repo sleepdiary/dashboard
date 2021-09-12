@@ -16,13 +16,13 @@ case "$1" in
     test)
         npx vue-cli-service lint
         echo
+        generic_tests
         if ! node bin/check-urls.js
         then
             echo
             echo "This build will generate some invalid URLs."
             exit 2
         fi
-        generic_tests
         exit "$WARNED"
         ;;
 
