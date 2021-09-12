@@ -8,8 +8,10 @@ var diary,
     timezone,
     reverse,
     start,
-    theme,
+    sleep_chart_theme,
     cache,
+    event_graph_theme,
+    event_graph_lines,
     diary_loader = new self.DiaryLoader(
         diary_ => {
             postMessage([0,5]);
@@ -24,71 +26,76 @@ function calculate_info() {
 
     try {
 
-        var partial_key = [timezone,start,theme].join(' '),
-            full_key = partial_key + ' ' + reverse
+        var partial_key = [timezone,start,sleep_chart_theme].join(' '),
+            full_key = partial_key + ' ' + reverse,
+            response = [1]
         ;
 
         if ( cache[full_key] ) {
-            postMessage([0,100]);
-            postMessage(cache[full_key]);
-            return;
-        }
 
-        postMessage([0,10]);
+            response = cache[full_key];
 
-        var activities = cache[partial_key] || diary.daily_activities(
+        } else {
+
+            postMessage([0,10]);
+
+            var activities = cache[partial_key] || diary.daily_activities(
                 timezone,
                 start,
                 undefined,
                 1000*60*60/*ONE_HOUR*/,
-        ),
-            recent_activities = activities.slice(Math.max(activities.length-/*CUTOFF_DAYS*/14,0))
-        ;
+            ),
+                recent_activities = activities.slice(Math.max(activities.length-/*CUTOFF_DAYS*/14,0))
+            ;
 
-        cache[partial_key] = activities;
+            cache[partial_key] = activities;
 
-        while ( recent_activities.length && !recent_activities[0] ) recent_activities.shift();
-        var cutoff = recent_activities[0].start,
-            response = [1,diary.timezones(),diary.software_version()]
-        ;
-        postMessage([0,40]);
+            while ( recent_activities.length && !recent_activities[0] ) recent_activities.shift();
+            var cutoff = recent_activities[0].start;
+            response.push(diary.timezones(),diary.software_version());
+            postMessage([0,40]);
 
-        var recent = {
-            activities     : recent_activities,
-            schedule       : diary.summarise_schedule(                             r => r.start>=cutoff, undefined, timezone ),
-            summary_days   : diary.summarise_days    (                             r => r.start>=cutoff ),
-            summary_asleep : diary.summarise_records ( r => r.status=="asleep"     &&   r.start>=cutoff ),
-            sleeps_per_day : diary.total_per_day     ( r => r.status=="asleep"   , r => r.start>=cutoff ),
-            meds_per_day   : diary.total_per_day     ( r => r.status=="sleep aid", r => r.start>=cutoff ),
-        };
-        response.push(recent);
-        postMessage([0,50]);
+            var recent = {
+                activities     : recent_activities,
+                schedule       : diary.summarise_schedule(                             r => r.start>=cutoff, undefined, timezone ),
+                summary_days   : diary.summarise_days    (                             r => r.start>=cutoff ),
+                summary_asleep : diary.summarise_records ( r => r.status=="asleep"     &&   r.start>=cutoff ),
+                sleeps_per_day : diary.total_per_day     ( r => r.status=="asleep"   , r => r.start>=cutoff ),
+                meds_per_day   : diary.total_per_day     ( r => r.status=="sleep aid", r => r.start>=cutoff ),
+            };
+            response.push(recent);
+            postMessage([0,50]);
 
-        var long_term = {
-            activities     : activities,
-            schedule       : diary.summarise_schedule( undefined                 , undefined, timezone),
-            summary_days   : diary.summarise_days    (),
-            summary_asleep : diary.summarise_records ( r => r.status=="asleep"    ),
-            sleeps_per_day : diary.total_per_day     ( r => r.status=="asleep"    ),
-            meds_per_day   : diary.total_per_day     ( r => r.status=="sleep aid" ),
-        };
-        response.push(long_term);
-        postMessage([0,60]);
+            var long_term = {
+                activities     : activities,
+                schedule       : diary.summarise_schedule( undefined                 , undefined, timezone),
+                summary_days   : diary.summarise_days    (),
+                summary_asleep : diary.summarise_records ( r => r.status=="asleep"    ),
+                sleeps_per_day : diary.total_per_day     ( r => r.status=="asleep"    ),
+                meds_per_day   : diary.total_per_day     ( r => r.status=="sleep aid" ),
+            };
+            response.push(long_term);
+            postMessage([0,60]);
 
-        response.push( self.event_graph( long_term ) );
-        postMessage([0,65]);
-        response.push( self.find_patterns( recent, long_term ) );
-        postMessage([0,70]);
+            response.push( 0 ); // filled in later
+            response.push( self.find_patterns( recent, long_term ) );
+            postMessage([0,70]);
 
-        if ( reverse ) {
-            response.push( self.sleep_chart(recent_activities.slice(0).reverse(),theme,!start) );
-            postMessage([0,80]);
-            response.push( self.sleep_chart(       activities.slice(0).reverse(),theme,!start) );
-        } else {
-            response.push( self.sleep_chart(recent_activities,theme) );
-            postMessage([0,80]);
-            response.push( self.sleep_chart(       activities,theme) );
+            if ( reverse ) {
+                response.push( self.sleep_chart(recent_activities.slice(0).reverse(),sleep_chart_theme,!start) );
+                postMessage([0,80]);
+                response.push( self.sleep_chart(       activities.slice(0).reverse(),sleep_chart_theme,!start) );
+            } else {
+                response.push( self.sleep_chart(recent_activities,sleep_chart_theme) );
+                postMessage([0,80]);
+                response.push( self.sleep_chart(       activities,sleep_chart_theme) );
+            }
+
         }
+
+        postMessage([0,95]);
+        // runs too fast to bother caching:
+        response[5] = self.event_graph( response[4], event_graph_theme, event_graph_lines );
 
         postMessage([0,100]);
         postMessage(cache[full_key] = response);
@@ -103,10 +110,12 @@ onmessage = function(e) {
     postMessage([0,0]);
     switch ( e.data[0] ) {
     case "settings":
-        timezone = e.data[1];
-        theme    = e.data[2];
-        start    = e.data[3];
-        reverse  = e.data[4];
+        timezone          = e.data[1];
+        sleep_chart_theme = e.data[2];
+        start             = e.data[3];
+        reverse           = e.data[4];
+        event_graph_theme = e.data[5];
+        event_graph_lines = e.data[6];
         if ( diary ) calculate_info();
         break;
     case "diary":
