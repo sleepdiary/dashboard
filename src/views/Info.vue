@@ -94,7 +94,7 @@
                                 <v-tabs-items v-model="sleep_chart_tab">
                                     <v-tab-item :transition="false" value="root">
 
-                                        <v-list>
+                                        <v-list flat>
                                             <v-list-item @click.stop="sleep_chart_tab='theme'">
                                                 <v-list-item-icon><v-icon>mdi-theme-light-dark</v-icon></v-list-item-icon>
                                                 <v-list-item-content><v-list-item-title>Theme: {{sleep_chart_theme}}</v-list-item-title></v-list-item-content>
