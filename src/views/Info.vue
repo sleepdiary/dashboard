@@ -66,7 +66,145 @@
 
                 <v-list-item-group>
 
-                    <v-subheader>Sleep Chart</v-subheader>
+                    <v-subheader>
+                        Sleep Chart
+                        <v-spacer></v-spacer>
+
+                        <v-menu
+                          bottom
+                          left
+                        >
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-btn
+                                  dark
+                                  icon
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  @click="sleep_chart_tab='root'"
+                                >
+                                    <v-icon>mdi-dots-vertical</v-icon>
+                                </v-btn>
+                            </template>
+
+                            <v-tabs
+                              v-model="sleep_chart_tab"
+                              style="width:270px"
+                              height="0"
+                            >
+                                <v-tabs-items v-model="sleep_chart_tab">
+                                    <v-tab-item :transition="false" value="root">
+
+                                        <v-list>
+                                            <v-list-item @click.stop="sleep_chart_tab='theme'">
+                                                <v-list-item-icon><v-icon>mdi-theme-light-dark</v-icon></v-list-item-icon>
+                                                <v-list-item-content><v-list-item-title>Theme: {{sleep_chart_theme}}</v-list-item-title></v-list-item-content>
+                                                <v-list-item-action>
+                                                    <v-icon color="grey lighten-1">mdi-chevron-right</v-icon>
+                                                </v-list-item-action>
+                                            </v-list-item>
+                                            <v-list-item @click.stop="sleep_chart_tab='start'">
+                                                <v-list-item-icon><v-icon>mdi-clock</v-icon></v-list-item-icon>
+                                                <v-list-item-content><v-list-item-title>Start at: {{sleep_chart_start?'6pm':'midnight'}}</v-list-item-title></v-list-item-content>
+                                                <v-list-item-action>
+                                                    <v-icon color="grey lighten-1">mdi-chevron-right</v-icon>
+                                                </v-list-item-action>
+                                            </v-list-item>
+                                            <v-list-item @click.stop="sleep_chart_tab='sort'">
+                                                <v-list-item-icon><v-icon>mdi-sort-calendar-ascending</v-icon></v-list-item-icon>
+                                                <v-list-item-content><v-list-item-title>Sort by: {{sleep_chart_reverse?'oldest first':'newest first'}}</v-list-item-title></v-list-item-content>
+                                                <v-list-item-action>
+                                                    <v-icon color="grey lighten-1">mdi-chevron-right</v-icon>
+                                                </v-list-item-action>
+                                            </v-list-item>
+                                        </v-list>
+                                    </v-tab-item>
+
+                                    <v-tab-item :transition="false" value="theme">
+                                        <v-toolbar flat>
+                                            <v-btn icon @click.stop="sleep_chart_tab = 'root'">
+                                                <v-icon>mdi-arrow-left</v-icon>
+                                            </v-btn>
+
+                                            <v-toolbar-title>Choose theme</v-toolbar-title>
+                                        </v-toolbar>
+                                        <v-divider/>
+                                        <v-list>
+                                            <v-list-item-group v-model="sleep_chart_theme">
+                                                <v-list-item value="dark">
+                                                    <v-list-item-content>
+                                                        <v-list-item-title>Dark</v-list-item-title>
+                                                        <v-list-item-subtitle>Easier to view in bed</v-list-item-subtitle>
+                                                    </v-list-item-content>
+                                                </v-list-item>
+                                                <v-list-item value="light">
+                                                    <v-list-item-content>
+                                                        <v-list-item-title>Light</v-list-item-title>
+                                                        <v-list-item-subtitle>Looks better in print</v-list-item-subtitle>
+                                                    </v-list-item-content>
+                                                </v-list-item>
+                                            </v-list-item-group>
+                                        </v-list>
+                                    </v-tab-item>
+
+                                    <v-tab-item :transition="false" value="start">
+                                        <v-toolbar flat>
+                                            <v-btn icon @click.stop="sleep_chart_tab = 'root'">
+                                                <v-icon>mdi-arrow-left</v-icon>
+                                            </v-btn>
+
+                                            <v-toolbar-title>Start time</v-toolbar-title>
+                                        </v-toolbar>
+                                        <v-divider/>
+                                        <v-list>
+                                            <v-list-item-group v-model="sleep_chart_start">
+                                                <v-list-item :value="64800000">
+                                                    <v-list-item-content>
+                                                        <v-list-item-title>6pm</v-list-item-title>
+                                                        <v-list-item-subtitle>Used by many sleep doctors</v-list-item-subtitle>
+                                                    </v-list-item-content>
+                                                </v-list-item>
+                                                <v-list-item :value="0">
+                                                    <v-list-item-content>
+                                                        <v-list-item-title>Midnight</v-list-item-title>
+                                                        <v-list-item-subtitle>Used by most lay people</v-list-item-subtitle>
+                                                    </v-list-item-content>
+                                                </v-list-item>
+                                            </v-list-item-group>
+                                        </v-list>
+                                    </v-tab-item>
+
+                                    <v-tab-item :transition="false" value="sort">
+                                        <v-toolbar flat>
+                                            <v-btn icon @click.stop="sleep_chart_tab = 'root'">
+                                                <v-icon>mdi-arrow-left</v-icon>
+                                            </v-btn>
+
+                                            <v-toolbar-title>Sort by&mldr;</v-toolbar-title>
+                                        </v-toolbar>
+                                        <v-divider/>
+                                        <v-list>
+                                            <v-list-item-group v-model="sleep_chart_reverse">
+                                                <v-list-item :value="true">
+                                                    <v-list-item-content>
+                                                        <v-list-item-title>Oldest first</v-list-item-title>
+                                                        <v-list-item-subtitle>Earliest entries will appear at the top</v-list-item-subtitle>
+                                                    </v-list-item-content>
+                                                </v-list-item>
+                                                <v-list-item :value="false">
+                                                    <v-list-item-content>
+                                                        <v-list-item-title>Newest first</v-list-item-title>
+                                                        <v-list-item-subtitle>Latest entries will appear at the top</v-list-item-subtitle>
+                                                    </v-list-item-content>
+                                                </v-list-item>
+                                            </v-list-item-group>
+                                        </v-list>
+                                    </v-tab-item>
+
+                                </v-tabs-items>
+                            </v-tabs>
+
+                        </v-menu>
+                    </v-subheader>
 
                     <v-list-item>
                         <v-list-item-content v-html="chart_svg[0]" @click="show_svg(chart_svg[1],'Recent sleep graph')" />
@@ -194,6 +332,10 @@
          day_length: 0,
          wiki_url: WIKI_URL,
          worker: new Worker(),
+         sleep_chart_tab: 'root',
+         sleep_chart_theme: 'dark',
+         sleep_chart_start: 64800000,
+         sleep_chart_reverse: true,
      }),
 
      mounted() {
@@ -203,13 +345,13 @@
                      this.$emit("progress",data[1]);
                      break;
                  case 1: // success
-                     this.recent    = data[1];
-                     this.long_term = data[2];
-                     this.timezones = data[3];
-                     this.chart_svg = data[4];
-                     this.event_svg = data[5];
-                     this.patterns  = data[6];
-                     this.software_version = data[7];
+                     this.timezones        = data[1];
+                     this.software_version = data[2];
+                     this.recent           = data[3];
+                     this.long_term        = data[4];
+                     this.event_svg        = data[5];
+                     this.patterns         = data[6];
+                     this.chart_svg        = [ data[7], data[8] ];
 
                      this.   recent_began = this.recent   .activities[0].id.split("T")[0];
                      this.long_term_began = this.long_term.activities[0].id.split("T")[0];
@@ -232,7 +374,7 @@
              }
          };
          this.$emit('retitle',"Info");
-         this.$emit("busy");
+         this.update_settings();
          diary_manager.on_init( () => {
              if ( diary_manager.get_diaries().length ) {
                  this.update_diary();
@@ -244,15 +386,10 @@
      },
 
      watch: {
-         timezone() {
-             clearTimeout( this.update_timeout );
-             this.update_timeout = setTimeout( () => {
-                 this.$emit("busy");
-                 if ( diary_manager.get_diaries().length ) {
-                     this.update_diary();
-                 }
-             }, 500 );
-         },
+         timezone           () { this.update_settings(); },
+         sleep_chart_theme  () { this.update_settings(); },
+         sleep_chart_start  () { this.update_settings(); },
+         sleep_chart_reverse() { this.update_settings(); },
      },
 
      methods: {
@@ -276,7 +413,7 @@
 
          update_diary() {
              this.worker.postMessage([
-                 this.timezone,
+                 'diary',
                  diary_manager.merge_diaries().to("storage-line")
              ]);
          },
@@ -361,6 +498,17 @@
                          return date +       hour + ":00-"  + (hour+1) + ":00";
                      }
              }
+         },
+
+         update_settings() {
+             this.$emit("busy");
+             this.worker.postMessage([
+                 'settings',
+                 this.timezone,
+                 this.sleep_chart_theme,
+                 this.sleep_chart_start,
+                 this.sleep_chart_reverse,
+             ]);
          },
 
      },
