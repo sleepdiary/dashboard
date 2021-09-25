@@ -362,14 +362,14 @@
                 <v-list-item
                     v-for="pattern in patterns"
                     :key="pattern.id"
-                    :href="wiki_url+pattern.id"
+                    :href="docs_url+'patterns/'+pattern.id"
                 >
                     <v-list-item-icon>
                         <v-icon>{{pattern.icon}}</v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
                         <v-list-item-title>{{pattern.message}}</v-list-item-title>
-                        <v-list-item-subtitle>See advice on the wiki</v-list-item-subtitle>
+                        <v-list-item-subtitle>See advice about this pattern</v-list-item-subtitle>
                     </v-list-item-content>
                 </v-list-item>
 
@@ -420,7 +420,7 @@
 <script>
 
  import diary_manager from "@/diary_manager.js";
- import { WIKI_URL } from "@/constants.js";
+ import { DOCS_URL } from "@/constants.js";
  import Worker from 'worker-loader!@/info';
 
  const ONE_HOUR = 1000*60*60;
@@ -448,7 +448,7 @@
          awake_at: 0,
          asleep_at: 0,
          day_length: 0,
-         wiki_url: WIKI_URL,
+         docs_url: DOCS_URL,
          worker: new Worker(),
          sleep_chart_tab: 'root',
          sleep_chart_theme: 'dark',
