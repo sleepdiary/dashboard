@@ -57,7 +57,7 @@
                     Add a diary or spreadsheet
                 </v-btn>
 
-                <p class="mt-6">See <a :href="wiki_url">the wiki</a> for more information,<br>including supported formats<br>and how to create a diary</p>
+                <p class="mt-6">See <a :href="docs_url">the docs</a> for more information,<br>including supported formats<br>and how to create a diary</p>
 
             </div>
 
@@ -100,7 +100,7 @@
 <script>
 
 import diary_manager from "@/diary_manager.js";
-import { WIKI_URL } from "@/constants.js";
+import { DOCS_URL } from "@/constants.js";
 
 export default {
 
@@ -122,7 +122,7 @@ export default {
          )[0],
          trigger_rebuild: 1,
          error: false,
-         wiki_url: WIKI_URL,
+         docs_url: DOCS_URL,
      }),
 
      computed: {
