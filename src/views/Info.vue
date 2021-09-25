@@ -349,7 +349,7 @@
 
                     <v-list-item>
                         <v-list-item-icon>
-                            <v-icon>mdi-file-pdf</v-icon>
+                            <v-icon>mdi-file-pdf-box</v-icon>
                         </v-list-item-icon>
                         <v-list-item-content @click="generate_report()">
                             <v-list-item-title>Printable report</v-list-item-title>
