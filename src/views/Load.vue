@@ -8,7 +8,8 @@
                 type="file"
                 ref="opener"
                 :accept="supported_extensions"
-                @change="add_diary"
+                @change="add_diaries"
+                multiple
             >
         </div>
 
@@ -149,9 +150,9 @@ export default {
                  ++this.trigger_rebuild;
              }
          },
-         add_diary(event) {
+         add_diaries(event) {
              this.$emit("busy");
-             diary_manager.add_diary(event);
+             diary_manager.add_diaries(event);
          },
          get_last_update(diary) {
              const records = diary.to("Standard").records;
