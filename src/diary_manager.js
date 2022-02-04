@@ -25,6 +25,8 @@ let session_storage = (() => {
     sentinel = {},
     id = 0,
     current_file,
+    awaiting_files = [],
+    awaiting_index = 0,
     call_callbacks = is_error => {
         Object.values(permanent_callbacks).forEach( c => c(diaries.length == 1 && diary_strings.length == 0,is_error) );
         callbacks.forEach( c => c(diaries.length == 1 && diary_strings.length == 0,is_error) );
@@ -33,13 +35,19 @@ let session_storage = (() => {
     diary_loader = new window.DiaryLoader(
         (diary,source) => {
             if ( !diary.records.length ) return call_callbacks(true);
-            current_file = 0;
             diaries.push([id++,diary,diary.format_info()]);
-            call_callbacks(false);
-            if ( !source.search || source.search(/^hash/) ) --init_waiting;
-            if ( init_callbacks && !init_waiting ) {
-                init_callbacks.forEach( c => c(diaries.length == 1 && diary_strings.length == 0) );
-                init_callbacks = 0;
+            if ( awaiting_index < awaiting_files.length ) {
+                current_file = awaiting_files[awaiting_index++];
+                diary_loader.load([current_file]);
+            } else {
+                current_file = 0;
+                awaiting_files = [];
+                call_callbacks(false);
+                if ( !source.search || source.search(/^hash/) ) --init_waiting;
+                if ( init_callbacks && !init_waiting ) {
+                    init_callbacks.forEach( c => c(diaries.length == 1 && diary_strings.length == 0) );
+                    init_callbacks = 0;
+                }
             }
             if ( source && source !== sentinel ) {
                 diary.to_async("storage-line").then( json => {
@@ -101,9 +109,11 @@ export default {
     add_permanent_callback(key,cb) {
         permanent_callbacks[key] = cb;
     },
-    add_diary(event) {
-        diary_loader.load(event);
-        current_file = event.target.files[0];
+    add_diaries(event) {
+        awaiting_files = event.target.files;
+        current_file = awaiting_files[0];
+        awaiting_index = 1;
+        diary_loader.load([current_file]);
     },
     remove_diary(id) {
         for ( let n=0; n!=diaries.length; ++n ) {
