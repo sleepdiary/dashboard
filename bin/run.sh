@@ -37,6 +37,7 @@ case "$1" in
         ;;
 
     *)
+        echo "Usage: $0 < build | test | serve | upgrade >"
         exit 2
         ;;
 
