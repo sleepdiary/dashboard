@@ -115,6 +115,12 @@ export default {
         awaiting_index = 1;
         diary_loader.load([current_file]);
     },
+    add_demo(filename) {
+        fetch(filename)
+            .then( r => r.text() )
+            .then( t => diary_loader.load(t) )
+        ;
+    },
     remove_diary(id) {
         for ( let n=0; n!=diaries.length; ++n ) {
             if ( diaries[n][0] == id ) {
