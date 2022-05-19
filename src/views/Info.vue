@@ -31,6 +31,7 @@
                                         </th>
                                         <td>{{recent_began}}</td>
                                         <td>{{long_term_began}}</td>
+                                        <td class="hpad-unless-narrow"></td>
                                     </tr>
 
                                     <tr
@@ -53,6 +54,15 @@
                                             <span title="standard deviation">{{schedules[2] ? schedules[1].standard_deviation.toFixed(2) : to_duration(schedules[1].standard_deviation)}}</span>
                                         </td>
                                         <td v-else>(no data)</td>
+                                        <td class="hpad-unless-narrow">
+                                            <v-btn
+                                              icon
+                                              @click="explain_schedules(schedules)"
+                                            >
+                                                <v-icon>mdi-information</v-icon>
+                                            </v-btn>
+                                        </td>
+
                                     </tr>
 
                                     <tr>
@@ -67,6 +77,52 @@
                         </v-simple-table>
 
                     </v-list-item-content>
+
+                    <v-dialog
+                      max-width="400"
+                      v-model="explain_schedules_dialog"
+                      scrollable
+                    >
+                        <v-card
+                          color="#000022"
+                        >
+                            <v-card-title class="text-h5">
+                                {{explain_schedules_item[3]}}
+                            </v-card-title>
+
+                            <v-card-text>
+
+                                <p>This row describes your {{explain_schedules_item[5]}}.</p>
+
+                                <p v-if="explain_schedules_item[0]">
+                                    The left-hand column only looks at the latest two weeks of data, so you can see how you're doing right now.
+                                    <br/>
+                                    It says that your average {{explain_schedules_item[5]}} since {{recent_began}} was {{explain_schedules_item[2] ? explain_schedules_item[0].mean.toFixed(2) : to_duration(explain_schedules_item[0].mean)}}, with a <em>standard deviation</em> of {{explain_schedules_item[2] ? explain_schedules_item[0].standard_deviation.toFixed(2) : to_duration(explain_schedules_item[0].standard_deviation)}}.
+                                </p>
+                                <p v-else-if="explain_schedules_item[1]">The left-hand column is empty because there isn't enough recent data.</p>
+
+                                <p v-if="explain_schedules_item[1]">
+                                    The right-hand column looks at all the data you've collected, so you can see long-term trends.
+                                    <br/>
+                                    It says that your average {{explain_schedules_item[5]}} since {{long_term_began}} was {{explain_schedules_item[2] ? explain_schedules_item[1].mean.toFixed(2) : to_duration(explain_schedules_item[1].mean)}}, with a <em>standard deviation</em> of {{explain_schedules_item[2] ? explain_schedules_item[1].standard_deviation.toFixed(2) : to_duration(explain_schedules_item[1].standard_deviation)}}.
+                                </p>
+                                <p v-else>There isn't enough data to calculate these values just yet - keep logging and it'll start to work!</p>
+
+                            </v-card-text>
+
+                            <v-card-actions>
+                                <v-btn
+                                  color="primary"
+                                  width="100%"
+                                  text
+                                  @click="explain_schedules_dialog = false"
+                                >
+                                    <v-icon>mdi-close</v-icon>
+                                    Close
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
 
                 </v-list-item>
 
@@ -434,6 +490,10 @@
      .space-unless-narrow:after {
          content: '';
      }
+     .hpad-unless-narrow {
+         padding-left: 0px ! important;
+         padding-right: 0px ! important;
+     }
      .narrow { display: initial }
      .wide { display: none }
  }
@@ -457,6 +517,8 @@
          recent_began: '',
          //long_term: {}, // NO!  Making this reactive takes a long time, for no benefit
          long_term_began: '',
+         explain_schedules_dialog: false,
+         explain_schedules_item: [],
          software_version: '',
          update_timeout: null,
          latest_primary_sleep: [],
@@ -507,12 +569,12 @@
                      this.long_term_began = this.long_term.activities[0].id.split("T")[0];
 
                      this.schedule_list = [
-                         [ this.recent.summary_asleep, this.long_term.summary_asleep, 0, "Total Sleep Time", 'Slept for', ],
-                         [ this.recent.schedule.wake , this.long_term.schedule.wake , 0, "Wake At", "Woke up", ],
-                         [ this.recent.schedule.sleep, this.long_term.schedule.sleep, 0, "Asleep At", "Asleep", ],
-                         [ this.recent.summary_days  , this.long_term.summary_days  , 0, "Day Length", "Length", ],
-                         [ this.recent.sleeps_per_day, this.long_term.sleeps_per_day, 1, "Sleeps Per Day", "Sleeps", ],
-                         [ this.recent.meds_per_day  , this.long_term.meds_per_day  , 1, "Medications Per Day", "Meds", ],
+                         [ this.recent.summary_asleep, this.long_term.summary_asleep, 0, "Total Sleep Time", 'Slept for', "amount of sleep per day", ],
+                         [ this.recent.schedule.wake , this.long_term.schedule.wake , 0, "Wake At", "Woke up", "wake time", ],
+                         [ this.recent.schedule.sleep, this.long_term.schedule.sleep, 0, "Asleep At", "Asleep", "fall-asleep time", ],
+                         [ this.recent.summary_days  , this.long_term.summary_days  , 0, "Day Length", "Length", "day length", ],
+                         [ this.recent.sleeps_per_day, this.long_term.sleeps_per_day, 1, "Sleeps Per Day", "Sleeps", "number of sleeps per day", ],
+                         [ this.recent.meds_per_day  , this.long_term.meds_per_day  , 1, "Medications Per Day", "Meds", "number of medications per day", ],
                      ];
 
                      this.$emit("idle");
@@ -545,6 +607,11 @@
      },
 
      methods: {
+
+         explain_schedules(schedules) {
+             this.explain_schedules_dialog = true;
+             this.explain_schedules_item = schedules;
+         },
 
          fix_timezone(time) {
              return new Date(new Intl.DateTimeFormat(
