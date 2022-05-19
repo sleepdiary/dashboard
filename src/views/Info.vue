@@ -25,7 +25,10 @@
                                 <tbody>
 
                                     <tr>
-                                        <th>Date began</th>
+                                        <th>
+                                            <span class="wide">Date began</span>
+                                            <span class="narrow">Began</span>
+                                        </th>
                                         <td>{{recent_began}}</td>
                                         <td>{{long_term_began}}</td>
                                     </tr>
@@ -34,16 +37,19 @@
                                         v-for="schedules in schedule_list"
                                         :key="schedules[3]"
                                     >
-                                        <th>{{schedules[3]}}</th>
+                                        <th>
+                                            <span class="wide">{{schedules[3]}}</span>
+                                            <span class="narrow">{{schedules[4]}}</span>
+                                        </th>
                                         <td v-if="schedules[0]">
                                             <span title="average">{{schedules[2] ? schedules[0].mean.toFixed(2) : to_duration(schedules[0].mean)}}</span>
-                                            ±
+                                            <span class="space-unless-narrow">±</span>
                                             <span title="standard deviation">{{schedules[2] ? schedules[0].standard_deviation.toFixed(2) : to_duration(schedules[0].standard_deviation)}}</span>
                                         </td>
                                         <td v-else>(no data)</td>
                                         <td v-if="schedules[1]">
                                             <span title="average">{{schedules[2] ? schedules[1].mean.toFixed(2) : to_duration(schedules[1].mean)}}</span>
-                                            ±
+                                            <span class="space-unless-narrow">±</span>
                                             <span title="standard deviation">{{schedules[2] ? schedules[1].standard_deviation.toFixed(2) : to_duration(schedules[1].standard_deviation)}}</span>
                                         </td>
                                         <td v-else>(no data)</td>
@@ -417,6 +423,22 @@
     </v-main>
 </template>
 
+<style>
+ .space-unless-narrow:before,
+ .space-unless-narrow:after {
+     content: ' ';
+ }
+ .narrow { display: none }
+ @media only screen and (max-width: 429px) {
+     .space-unless-narrow:before,
+     .space-unless-narrow:after {
+         content: '';
+     }
+     .narrow { display: initial }
+     .wide { display: none }
+ }
+</style>
+
 <script>
 
  import diary_manager from "@/diary_manager.js";
@@ -485,12 +507,12 @@
                      this.long_term_began = this.long_term.activities[0].id.split("T")[0];
 
                      this.schedule_list = [
-                         [ this.recent.summary_asleep, this.long_term.summary_asleep, 0, "Total Sleep Time" ],
-                         [ this.recent.schedule.wake , this.long_term.schedule.wake , 0, "Wake At" ],
-                         [ this.recent.schedule.sleep, this.long_term.schedule.sleep, 0, "Asleep At" ],
-                         [ this.recent.summary_days  , this.long_term.summary_days  , 0, "Day Length" ],
-                         [ this.recent.sleeps_per_day, this.long_term.sleeps_per_day, 1, "Sleeps Per Day" ],
-                         [ this.recent.meds_per_day  , this.long_term.meds_per_day  , 1, "Medications Per Day" ],
+                         [ this.recent.summary_asleep, this.long_term.summary_asleep, 0, "Total Sleep Time", 'Slept for', ],
+                         [ this.recent.schedule.wake , this.long_term.schedule.wake , 0, "Wake At", "Woke up", ],
+                         [ this.recent.schedule.sleep, this.long_term.schedule.sleep, 0, "Asleep At", "Asleep", ],
+                         [ this.recent.summary_days  , this.long_term.summary_days  , 0, "Day Length", "Length", ],
+                         [ this.recent.sleeps_per_day, this.long_term.sleeps_per_day, 1, "Sleeps Per Day", "Sleeps", ],
+                         [ this.recent.meds_per_day  , this.long_term.meds_per_day  , 1, "Medications Per Day", "Meds", ],
                      ];
 
                      this.$emit("idle");
