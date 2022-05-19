@@ -1,0 +1,1 @@
+.space-unless-narrow:after,.space-unless-narrow:before{content:" "}.narrow{display:none}@media only screen and (max-width:429px){.space-unless-narrow:after,.space-unless-narrow:before{content:""}.hpad-unless-narrow{padding-left:0!important;padding-right:0!important}.narrow{display:initial}.wide{display:none}}
