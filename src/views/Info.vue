@@ -7,7 +7,56 @@
 
             <v-list>
 
-                <v-subheader>Statistics</v-subheader>
+                <v-subheader>
+
+                    Statistics
+
+                    <v-spacer></v-spacer>
+
+                    <v-menu
+                      bottom
+                      left
+                    >
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              dark
+                              icon
+                              v-bind="attrs"
+                              v-on="on"
+                              @click="statistics_tab='root'"
+                            >
+                                <v-icon>mdi-dots-vertical</v-icon>
+                            </v-btn>
+                        </template>
+
+                        <v-list flat>
+                            <v-list-item-group
+                              v-model="statistics_options"
+                              multiple
+                            >
+                                <template
+                                  v-for="option in statistics_option_names"
+                                >
+                                    <v-list-item
+                                      :key="option"
+                                      @click.stop=""
+                                      :value="option"
+                                    >
+                                        <template v-slot:default="{ active }">
+                                            <v-list-item-action>
+                                                <v-checkbox
+                                                  :input-value="active"
+                                                />
+                                            </v-list-item-action>
+                                            <v-list-item-content><v-list-item-title>Show {{statistics_option_titles[option]}}</v-list-item-title></v-list-item-content>
+                                        </template>
+                                    </v-list-item>
+                                </template>
+                            </v-list-item-group>
+                        </v-list>
+                    </v-menu>
+
+                </v-subheader>
 
                 <v-list-item>
                     <v-list-item-content>
@@ -18,113 +67,225 @@
                                 <thead>
                                     <tr>
                                         <th></th>
-                                        <th>Recent</th>
-                                        <th>Long-term</th>
-                                        <th></th>
+                                        <th style="text-align:center" colspan="3">Recent</th>
+                                        <th style="text-align:center" colspan="3">Long-term</th>
+                                        <th v-if="statistics_options.includes('infos')"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
 
-                                    <tr>
+                                    <v-slide-x-transition>
+                                        <tr
+                                          v-show="statistics_options.includes('infos')&&stats_info=='dates'"
+                                          @click="toggle_stats_info('dates')"
+                                          class="stats-below"
+                                        >
+                                            <td
+                                              colspan="8"
+                                              style="text-align:right"
+                                            >
+                                                This column is based on your entire diary, from <em>{{long_term_began}}</em> to <em>{{ended}}</em>.<br/>
+                                                It's useful for spotting long-term trends in your sleeping pattern.
+                                            </td>
+                                        </tr>
+                                    </v-slide-x-transition>
+                                    <v-slide-x-transition>
+                                        <tr
+                                          v-show="statistics_options.includes('infos')&&stats_info=='dates'"
+                                          @click="toggle_stats_info('dates')"
+                                          class="stats-arrows"
+                                        >
+                                            <td colspan="5"></td>
+                                            <td class="stats-plus-minus"><v-icon small>mdi-arrow-down-bold</v-icon></td>
+                                            <td colspan="2"></td>
+                                        </tr>
+                                    </v-slide-x-transition>
+                                    <tr
+                                      @click="toggle_stats_info('dates')"
+                                    >
                                         <th>
                                             <span class="wide">Date began</span>
                                             <span class="narrow">Began</span>
                                         </th>
-                                        <td>{{recent_began}}</td>
-                                        <td>{{long_term_began}}</td>
-                                        <td class="hpad-unless-narrow"></td>
-                                    </tr>
-
-                                    <tr
-                                        v-for="schedules in schedule_list"
-                                        :key="schedules[3]"
-                                    >
-                                        <th>
-                                            <span class="wide">{{schedules[3]}}</span>
-                                            <span class="narrow">{{schedules[4]}}</span>
-                                        </th>
-                                        <td v-if="schedules[0]">
-                                            <span title="average">{{schedules[2] ? schedules[0].mean.toFixed(2) : to_duration(schedules[0].mean)}}</span>
-                                            <span class="space-unless-narrow">±</span>
-                                            <span title="standard deviation">{{schedules[2] ? schedules[0].standard_deviation.toFixed(2) : to_duration(schedules[0].standard_deviation)}}</span>
-                                        </td>
-                                        <td v-else>(no data)</td>
-                                        <td v-if="schedules[1]">
-                                            <span title="average">{{schedules[2] ? schedules[1].mean.toFixed(2) : to_duration(schedules[1].mean)}}</span>
-                                            <span class="space-unless-narrow">±</span>
-                                            <span title="standard deviation">{{schedules[2] ? schedules[1].standard_deviation.toFixed(2) : to_duration(schedules[1].standard_deviation)}}</span>
-                                        </td>
-                                        <td v-else>(no data)</td>
-                                        <td class="hpad-unless-narrow">
-                                            <v-btn
-                                              icon
-                                              @click="explain_schedules(schedules)"
-                                            >
+                                        <td style="text-align:center" colspan="3">{{recent_began}}</td>
+                                        <td style="text-align:center" colspan="3">{{long_term_began}}</td>
+                                        <td class="hpad-unless-narrow" v-if="statistics_options.includes('infos')">
+                                            <v-btn icon>
                                                 <v-icon>mdi-information</v-icon>
                                             </v-btn>
                                         </td>
 
                                     </tr>
+                                    <v-slide-x-reverse-transition>
+                                        <tr
+                                          v-show="statistics_options.includes('infos')&&stats_info=='dates'"
+                                          @click="toggle_stats_info('dates')"
+                                          class="stats-arrows stats-below"
+                                        >
+                                            <td colspan="2"></td>
+                                            <td class="stats-plus-minus"><v-icon small>mdi-arrow-up-bold</v-icon></td>
+                                            <td colspan="5"></td>
+                                        </tr>
+                                    </v-slide-x-reverse-transition>
+                                    <v-slide-x-reverse-transition>
+                                        <tr
+                                          v-show="statistics_options.includes('infos')&&stats_info=='dates'"
+                                          @click="toggle_stats_info('dates')"
+                                        >
+                                            <td
+                                              colspan="8"
+                                            >
+                                                This column just shows data for the {{Math.round( ( new Date(ended) - new Date(recent_began).getTime() ) / (24*60*60*1000) )+1}} days between <em>{{recent_began}}</em> and <em>{{ended}}</em>.<br/>
+                                                It's useful for understanding your situation right now.
+                                            </td>
+                                        </tr>
+                                    </v-slide-x-reverse-transition>
 
-                                    <tr>
+                                    <template
+                                        v-for="schedules in ( statistics_options.includes('borings') ? schedule_list : schedule_list.filter( s => !s[6] ) )"
+                                    >
+
+                                        <v-slide-x-transition
+                                          :key="'above-'+schedules[3]"
+                                        >
+                                            <tr
+                                              v-show="statistics_options.includes('infos')&&stats_info==schedules"
+                                              @click="toggle_stats_info(schedules)"
+                                              class="stats-below"
+                                            >
+                                                <td
+                                                  colspan="8"
+                                                  v-if="schedules[0]"
+                                                  style="text-align:right"
+                                                  v-html="to_description(schedules,1)"
+                                                />
+                                            </tr>
+                                        </v-slide-x-transition>
+                                        <v-slide-x-transition
+                                          :key="'down-'+schedules[3]"
+                                        >
+                                            <tr
+                                              v-show="statistics_options.includes('infos')&&stats_info==schedules"
+                                              @click="toggle_stats_info(schedules)"
+                                              class="stats-arrows"
+                                            >
+                                                <td colspan="5"></td>
+                                                <td class="stats-plus-minus"><v-icon small>mdi-arrow-down-bold</v-icon></td>
+                                                <td colspan="2"></td>
+                                            </tr>
+                                        </v-slide-x-transition>
+                                        <tr
+                                          :key="'main-'+schedules[3]"
+                                          @click="toggle_stats_info(schedules)"
+                                              :style="schedules[6] ? 'opacity:0.5' : ''"
+                                        >
+                                            <th>
+                                                <span class="wide">{{schedules[3]}}</span>
+                                                <span class="narrow">{{schedules[4]}}</span>
+                                            </th>
+                                            <template v-if="schedules[0]">
+                                                <td class="stats-average">{{to_value( schedules[2], schedules[0].mean )}}</td>
+                                                <td class="stats-plus-minus space-unless-narrow">±</td>
+                                                <td class="stats-sd">{{to_value( schedules[2]&1, schedules[0].standard_deviation )}}</td>
+                                            </template>
+                                            <td
+                                              style="text-align:center"
+                                              colspan="3"
+                                              v-else
+                                            >
+                                                (no data)
+                                            </td>
+                                            <template v-if="schedules[1]">
+                                                <td class="stats-average">{{to_value( schedules[2], schedules[1].mean )}}</td>
+                                                <td class="stats-plus-minus space-unless-narrow">±</td>
+                                                <td class="stats-sd">{{to_value( schedules[2]&1, schedules[1].standard_deviation )}}</td>
+                                            </template>
+                                            <td
+                                              colspan="3"
+                                              style="text-align:center"
+                                              v-else
+                                            >
+                                                (no data)
+                                            </td>
+                                            <td class="hpad-unless-narrow" v-if="statistics_options.includes('infos')">
+                                                <v-btn icon>
+                                                    <v-icon>mdi-information</v-icon>
+                                                </v-btn>
+                                            </td>
+
+                                        </tr>
+                                        <v-slide-x-reverse-transition
+                                          :key="'up-'+schedules[3]"
+                                        >
+                                            <tr
+                                              v-show="statistics_options.includes('infos')&&stats_info==schedules"
+                                              @click="toggle_stats_info(schedules)"
+                                              class="stats-arrows stats-below"
+                                            >
+                                                <td colspan="2"></td>
+                                                <td class="stats-plus-minus"><v-icon small>mdi-arrow-up-bold</v-icon></td>
+                                                <td colspan="5"></td>
+                                            </tr>
+                                        </v-slide-x-reverse-transition>
+                                        <v-slide-x-reverse-transition
+                                          :key="'below-'+schedules[3]"
+                                        >
+                                            <tr
+                                              v-show="statistics_options.includes('infos')&&stats_info==schedules"
+                                              @click="toggle_stats_info(schedules)"
+                                            >
+                                                <td
+                                                  colspan="8"
+                                                  v-html="to_description(schedules,0)"
+                                                />
+                                            </tr>
+                                        </v-slide-x-reverse-transition>
+
+                                    </template>
+
+                                    <tr
+                                      @click="toggle_stats_info('tz')"
+                                    >
                                         <th>Timezone</th>
-                                        <td colspan="3">
+                                        <td @click.stop :colspan="6">
                                             <v-autocomplete v-model="timezone" :items="timezones"/>
                                         </td>
+                                        <td class="hpad-unless-narrow" v-if="statistics_options.includes('infos')">
+                                            <v-btn icon>
+                                                <v-icon>mdi-information</v-icon>
+                                            </v-btn>
+                                        </td>
                                     </tr>
+                                    <v-slide-y-transition>
+                                        <tr
+                                          v-show="statistics_options.includes('infos')&&stats_info=='tz'"
+                                          @click="toggle_stats_info('tz')"
+                                          class="stats-arrows stats-below"
+                                        >
+                                            <td></td>
+                                            <td class="stats-plus-minus" colspan="6"><v-icon small>mdi-arrow-up-bold</v-icon></td>
+                                            <td></td>
+                                        </tr>
+                                    </v-slide-y-transition>
+                                    <v-slide-y-transition>
+                                        <tr
+                                          v-show="statistics_options.includes('infos')&&stats_info=='tz'"
+                                          @click="toggle_stats_info('tz')"
+                                        >
+                                            <td
+                                              colspan="8"
+                                            >
+                                                We guess your <a @click.stop href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones">tz database timezone</a> from your diary and browser timezones.<br/>
+                                                If your diary doesn't have timezones, consider using <em>Etc/GMT</em> .
+                                            </td>
+                                        </tr>
+                                    </v-slide-y-transition>
 
                                 </tbody>
                             </template>
                         </v-simple-table>
 
                     </v-list-item-content>
-
-                    <v-dialog
-                      max-width="400"
-                      v-model="explain_schedules_dialog"
-                      scrollable
-                    >
-                        <v-card
-                          color="#000022"
-                        >
-                            <v-card-title class="text-h5">
-                                {{explain_schedules_item[3]}}
-                            </v-card-title>
-
-                            <v-card-text>
-
-                                <p>This row describes your {{explain_schedules_item[5]}}.</p>
-
-                                <p v-if="explain_schedules_item[0]">
-                                    The left-hand column only looks at the latest two weeks of data, so you can see how you're doing right now.
-                                    <br/>
-                                    It says that your average {{explain_schedules_item[5]}} since {{recent_began}} was {{explain_schedules_item[2] ? explain_schedules_item[0].mean.toFixed(2) : to_duration(explain_schedules_item[0].mean)}}, with a <em>standard deviation</em> of {{explain_schedules_item[2] ? explain_schedules_item[0].standard_deviation.toFixed(2) : to_duration(explain_schedules_item[0].standard_deviation)}}.
-                                </p>
-                                <p v-else-if="explain_schedules_item[1]">The left-hand column is empty because there isn't enough recent data.</p>
-
-                                <p v-if="explain_schedules_item[1]">
-                                    The right-hand column looks at all the data you've collected, so you can see long-term trends.
-                                    <br/>
-                                    It says that your average {{explain_schedules_item[5]}} since {{long_term_began}} was {{explain_schedules_item[2] ? explain_schedules_item[1].mean.toFixed(2) : to_duration(explain_schedules_item[1].mean)}}, with a <em>standard deviation</em> of {{explain_schedules_item[2] ? explain_schedules_item[1].standard_deviation.toFixed(2) : to_duration(explain_schedules_item[1].standard_deviation)}}.
-                                </p>
-                                <p v-else>There isn't enough data to calculate these values just yet - keep logging and it'll start to work!</p>
-
-                            </v-card-text>
-
-                            <v-card-actions>
-                                <v-btn
-                                  color="primary"
-                                  width="100%"
-                                  text
-                                  @click="explain_schedules_dialog = false"
-                                >
-                                    <v-icon>mdi-close</v-icon>
-                                    Close
-                                </v-btn>
-                            </v-card-actions>
-                        </v-card>
-                    </v-dialog>
-
                 </v-list-item>
 
                 <v-list-item-group>
@@ -498,6 +659,29 @@
      .narrow { display: initial }
      .wide { display: none }
  }
+ .stats-arrows td {
+     height: 12px ! important;
+ }
+ .stats-below td {
+     border-bottom: none ! important;
+ }
+ .stats-plus-minus {
+     text-align: center;
+     padding-left: 0 ! important;
+     padding-right: 0 ! important;
+ }
+ .stats-average {
+     text-align: right;
+     padding-right: 0 ! important;
+ }
+ .stats-sd {
+     text-align: left;
+     padding-left: 0 ! important;
+ }
+ .stats-amount {
+     font-style: italic;
+     white-space: nowrap;
+ }
 </style>
 
 <script>
@@ -518,8 +702,7 @@
          recent_began: '',
          //long_term: {}, // NO!  Making this reactive takes a long time, for no benefit
          long_term_began: '',
-         explain_schedules_dialog: false,
-         explain_schedules_item: [],
+         stats_info: 0,
          software_version: '',
          update_timeout: null,
          latest_primary_sleep: [],
@@ -535,6 +718,12 @@
          day_length: 0,
          docs_url: DOCS_URL,
          worker: new Worker(),
+         statistics_options: ["infos","borings"],
+         statistics_option_names: ["infos","borings"],
+         statistics_option_titles: {
+           "infos": "info buttons",
+           "borings": "greyed-out rows",
+         },
          sleep_chart_tab: 'root',
          sleep_chart_theme: 'dark',
          sleep_chart_start: 64800000,
@@ -553,6 +742,16 @@
 
      mounted() {
          this.worker.onmessage = ({data}) => {
+             const within_expected_range = ( recent, long_term, expected, range ) => (
+                     true
+                     && recent    && Math.abs( recent   .average - expected ) <= range
+                     && long_term && Math.abs( long_term.average - expected ) <= range
+                 ),
+                 too_varied = ( recent, long_term ) => (
+                     true
+                     && long_term.standard_deviation > 5*60*60*1000
+                 )
+             ;
              switch ( data[0] ) {
                  case 0: // progress
                      this.$emit("progress",data[1]);
@@ -568,14 +767,69 @@
 
                      this.   recent_began = this.recent   .activities[0].id.split("T")[0];
                      this.long_term_began = this.long_term.activities[0].id.split("T")[0];
+                     this.ended = this.long_term.activities[this.long_term.activities.length-1].id.split("T")[0];
 
                      this.schedule_list = [
-                         [ this.recent.summary_asleep, this.long_term.summary_asleep, 0, "Total Sleep Time", 'Slept for', "amount of sleep per day", ],
-                         [ this.recent.schedule.wake , this.long_term.schedule.wake , 0, "Wake At", "Woke up", "wake time", ],
-                         [ this.recent.schedule.sleep, this.long_term.schedule.sleep, 0, "Asleep At", "Asleep", "fall-asleep time", ],
-                         [ this.recent.summary_days  , this.long_term.summary_days  , 0, "Day Length", "Length", "day length", ],
-                         [ this.recent.sleeps_per_day, this.long_term.sleeps_per_day, 1, "Sleeps Per Day", "Sleeps", "number of sleeps per day", ],
-                         [ this.recent.meds_per_day  , this.long_term.meds_per_day  , 1, "Medications Per Day", "Meds", "number of medications per day", ],
+                         [
+                             this.recent.summary_asleep,
+                             this.long_term.summary_asleep,
+                             1, // indicates this is a duration
+                             // text to show in different places:
+                             "Total Sleep Time",
+                             'Slept for',
+                             "sleep per day",
+                             too_varied(this.recent.summary_asleep,this.long_term.summary_asleep), // is this boring?
+                         ],
+                         [
+                             this.recent.schedule.wake,
+                             this.long_term.schedule.wake,
+                             3, // indicates this is a time
+                             // text to show in different places:
+                             "Wake At",
+                             "Woke up",
+                             "wake time",
+                             too_varied(this.recent.schedule.wake,this.long_term.schedule.wake), // is this boring?
+                         ],
+                         [
+                             this.recent.schedule.sleep,
+                             this.long_term.schedule.sleep,
+                             3, // indicates this is a time
+                             // text to show in different places:
+                             "Asleep At",
+                             "Asleep",
+                             "fall-asleep time",
+                             too_varied(this.recent.schedule.sleep,this.long_term.schedule.sleep), // is this boring?
+                         ],
+                         [
+                             this.recent.summary_days,
+                             this.long_term.summary_days,
+                             1, // indicates this is a duration
+                             // text to show in different places:
+                             "Day Length",
+                             "Length",
+                             "calculated day length",
+                             within_expected_range(this.recent.summary_days,this.long_term.summary_days,24*60*60*1000,10*60*1000),
+                         ],
+                         [
+                             this.recent.sleeps_per_day,
+                             this.long_term.sleeps_per_day,
+                             0, // indicates this is a count
+                             // text to show in different places:
+                             "Sleeps Per Day",
+                             "Sleeps",
+                             "number of sleeps per day",
+                             within_expected_range(this.recent.sleeps_per_day,this.long_term.sleeps_per_day,1,0.1),
+                         ],
+                         [
+                             this.recent.meds_per_day,
+                             this.long_term.meds_per_day,
+                             0, // indicates this is a count
+                             // text to show in different places:
+                             "Medications Per Day",
+                             "Meds",
+                             "number of medications per day",
+                             within_expected_range(this.recent.sleeps_per_day,this.long_term.sleeps_per_day,0,0.1),
+                         ],
                      ];
 
                      this.$emit("idle");
@@ -609,9 +863,15 @@
 
      methods: {
 
-         explain_schedules(schedules) {
-             this.explain_schedules_dialog = true;
-             this.explain_schedules_item = schedules;
+         toggle_stats_info(schedules) {
+             if ( this.stats_info == schedules ) {
+                 this.stats_info = 0;
+             } else if ( this.stats_info ) {
+                 this.stats_info = 0;
+                 setTimeout( () => this.stats_info = schedules, 350 );
+             } else {
+                 this.stats_info = schedules;
+             }
          },
 
          fix_timezone(time) {
@@ -689,6 +949,7 @@
          },
 
          to_duration(value) {
+             if ( value < 0 ) value += 24*60*60*1000;
              const hours = Math.floor( value / ONE_HOUR ),
                    minutes = Math.floor( value / (60*1000) ) % 60
              ;
@@ -699,6 +960,45 @@
              );
          },
 
+         to_duration_long(value) {
+             if ( value < 0 ) value += 24*60*60*1000;
+             const hours = Math.floor(value/(60*60*1000));
+             value %= (60*60*1000);
+             const minutes = Math.floor(value/(60*1000));
+             value %= (60*1000);
+             const seconds = Math.floor(value/1000);
+             let ret = [];
+             switch ( hours ) {
+             case 0:
+                 break;
+             case 1:
+                 ret.push( '1 hour' );
+                 break;
+             default:
+                 ret.push( hours + ' hours' );
+             }
+             switch ( minutes ) {
+             case 0:
+                 break;
+             case 1:
+                 ret.push( '1 minute' );
+                 break;
+             default:
+                 ret.push( minutes + ' minutes' );
+             }
+             if ( !hours ) {
+                 switch ( seconds ) {
+                 case 0:
+                     break;
+                 case 1:
+                     ret.push( '1 second' );
+                     break;
+                 default:
+                     ret.push( seconds + ' seconds' );
+                 }
+             }
+             return ret.join( ', ' );
+         },
          to_approximate_time(value) {
              const time = new Date(value),
                    hour = time.getHours(),
@@ -717,6 +1017,84 @@
                      } else {
                          return date +       hour + ":00-"  + (hour+1) + ":00";
                      }
+             }
+         },
+
+         to_value( format, number ) {
+             switch ( format ) {
+               case 0:
+                 return number.toFixed(2);
+               default:
+                 return this.to_duration(number);
+             }
+         },
+
+         to_description(schedules,offset) {
+           let to_fixed = number => Number.isInteger(number) ? number : number.toFixed(2),
+               to_minutes = number => number - (number%(60*1000)),
+               to_time = time => new Intl.DateTimeFormat('default', { timeZone: 'UTC', hour: 'numeric', minute: 'numeric' }).format(new Date(time)),
+               days = Math.round( ( new Date(this.ended) - new Date(this.recent_began).getTime() ) / (24*60*60*1000) )+1,
+               prefix = 'Your average ' + schedules[5]
+                      + (
+                        ( offset )
+                        ? ' since <span class="stats-amount">' + this.long_term_began
+                        : ` for the ${days} days between <span class="stats-amount">${this.recent_began}</span> and <span class="stats-amount">${this.ended}`
+                      )
+                      + '</span> was',
+               suffix = (
+                 schedules[6]
+                 ? `<br/>This is <span style="opacity:0.5">grey</span> because it isn't very informative.`
+                 : ''
+               )
+           ;
+             if ( !schedules[offset] || days < 2 ) {
+               return "There isn't enough data to calculate these values just yet - keep logging and it'll start to work!";
+             } else if ( schedules[offset].standard_deviation ) {
+               switch ( schedules[2] ) {
+                   case 0: // count
+                       return (
+                         prefix + '\u00A0<span class="stats-amount">' + to_fixed(schedules[offset].mean)
+                         + '</span>.<br/>It was usually between <span class="stats-amount">'
+                         + (
+                           schedules[offset].mean > schedules[offset].standard_deviation
+                           ? to_fixed( schedules[offset].mean - schedules[offset].standard_deviation )
+                           : 0
+                         )
+                         + '</span> and <span class="stats-amount">'
+                         + to_fixed( schedules[offset].mean + schedules[offset].standard_deviation )
+                         + '</span>'
+                         + suffix
+                       );
+                   case 1: // duration
+                       return (
+                         prefix + '\u00A0<span class="stats-amount">' + this.to_duration_long(schedules[offset].mean)
+                         + '</span>.<br/>But it was often as short as <span class="stats-amount">'
+                         + this.to_duration_long( to_minutes(schedules[offset].mean) - to_minutes(schedules[offset].standard_deviation) )
+                         + '</span> or as long as <span class="stats-amount">'
+                         + this.to_duration_long( to_minutes(schedules[offset].mean) + to_minutes(schedules[offset].standard_deviation) )
+                         + '</span>.<br/>'
+                         + "Some weeks, all your days will be near the top or bottom of this range."
+                         + suffix
+                       );
+                   case 3: // time
+                       return (
+                         prefix + '\u00A0<span class="stats-amount">' + to_time(schedules[offset].mean)
+                         + '</span>.<br/>But it was often as early as <span class="stats-amount">'
+                         + to_time( to_minutes(schedules[offset].mean) - to_minutes(schedules[offset].standard_deviation) )
+                         + '</span> or as late as <span class="stats-amount">'
+                         + to_time( to_minutes(schedules[offset].mean) + to_minutes(schedules[offset].standard_deviation) )
+                         + '</span>.<br/>'
+                         + "Some weeks, all your days will be near the top or bottom of this range."
+                         + suffix
+                       );
+               }
+             } else {
+               prefix += 'always exactly\u00A0<span class="stats-amount">';
+               if ( schedules[2] ) {
+                 return prefix + this.to_duration_long(schedules[offset].mean) + '</span>.' + suffix;
+               } else {
+                 return prefix +              to_fixed(schedules[offset].mean) + '</span>.' + suffix;
+               }
              }
          },
 
