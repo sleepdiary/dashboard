@@ -118,7 +118,12 @@ export default {
     add_demo(filename) {
         fetch(filename)
             .then( r => r.text() )
-            .then( t => diary_loader.load(t) )
+            // trim the diary to an amount that doesn't intimidate new users:
+            .then( t => {
+                diary_loader.load(
+                    t.split("\n").filter( line => line.search(/^2020-(?:1|0[3-9])|^2021/) ).join("\n")
+                )
+            })
         ;
     },
     remove_diary(id) {
