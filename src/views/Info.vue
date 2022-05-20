@@ -20,6 +20,7 @@
                                         <th></th>
                                         <th>Recent</th>
                                         <th>Long-term</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -67,7 +68,7 @@
 
                                     <tr>
                                         <th>Timezone</th>
-                                        <td colspan="2">
+                                        <td colspan="3">
                                             <v-autocomplete v-model="timezone" :items="timezones"/>
                                         </td>
                                     </tr>
