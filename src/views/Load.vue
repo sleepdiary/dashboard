@@ -83,9 +83,10 @@
                             <v-list-item
                               v-for="diary in common_sleep_diaries"
                               :key="diary.filename"
+                              @click="load_demo(diary.filename)"
                             >
                                 <v-list-item-content>
-                                    <v-list-item-title @click="load_demo(diary.filename)" v-text="diary.short_title.replace(/^(.)/,(_,l)=>l.toUpperCase())"></v-list-item-title>
+                                    <v-list-item-title v-text="diary.short_title.replace(/^(.)/,(_,l)=>l.toUpperCase())"></v-list-item-title>
                                 </v-list-item-content>
                             </v-list-item>
                         </v-list-item-group>
