@@ -610,7 +610,7 @@
                             {{dialog_title}}
                         </v-card-title>
 
-                        <v-card-text style="max-height:70vh" v-html="dialog_svg"/>
+                        <v-card-text style="max-height:70vh;text-align:center;padding:0;line-height:0" v-html="dialog_svg"/>
 
                         <v-card-actions>
                             <v-btn
