@@ -73,7 +73,10 @@ function calculate_info() {
                 summary_asleep : diary.summarise_records ( r => r.status=="asleep"    ),
                 sleeps_per_day : diary.total_per_day     ( r => r.status=="asleep"    ),
                 meds_per_day   : diary.total_per_day     ( r => r.status=="sleep aid" ),
-            };
+            },
+                recent_graph = recent_activities,
+                long_term_graph = activities
+            ;
             response.push(long_term);
             postMessage([0,60]);
 
@@ -82,14 +85,12 @@ function calculate_info() {
             postMessage([0,70]);
 
             if ( reverse ) {
-                response.push( self.sleep_chart(recent_activities.slice(0).reverse(),sleep_chart_theme,!start) );
-                postMessage([0,80]);
-                response.push( self.sleep_chart(       activities.slice(0).reverse(),sleep_chart_theme,!start) );
-            } else {
-                response.push( self.sleep_chart(recent_activities,sleep_chart_theme) );
-                postMessage([0,80]);
-                response.push( self.sleep_chart(       activities,sleep_chart_theme) );
+                recent_graph    =    recent_graph.slice(0).reverse();
+                long_term_graph = long_term_graph.slice(0).reverse();
             }
+            response.push( self.sleep_chart(   recent_graph,sleep_chart_theme,!start,timezone) );
+            postMessage([0,80]);
+            response.push( self.sleep_chart(long_term_graph,sleep_chart_theme,!start,timezone) );
 
         }
 
