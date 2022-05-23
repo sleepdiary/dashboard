@@ -88,9 +88,9 @@ function calculate_info() {
                 recent_graph    =    recent_graph.slice(0).reverse();
                 long_term_graph = long_term_graph.slice(0).reverse();
             }
-            response.push( self.sleep_chart(   recent_graph,sleep_chart_theme,!start) );
+            response.push( self.sleep_chart(   recent_graph,sleep_chart_theme,!start,timezone) );
             postMessage([0,80]);
-            response.push( self.sleep_chart(long_term_graph,sleep_chart_theme,!start) );
+            response.push( self.sleep_chart(long_term_graph,sleep_chart_theme,!start,timezone) );
 
         }
 
