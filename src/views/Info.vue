@@ -610,7 +610,7 @@
                             {{dialog_title}}
                         </v-card-title>
 
-                        <v-card-text style="max-height:70vh" v-html="dialog_svg"/>
+                        <v-card-text style="max-height:70vh;text-align:center;padding:0;line-height:0" v-html="dialog_svg"/>
 
                         <v-card-actions>
                             <v-btn
@@ -844,6 +844,7 @@
          this.update_settings();
          diary_manager.on_init( () => {
              if ( diary_manager.get_diaries().length ) {
+                 this.timezone = diary_manager.force_timezone() || this.timezone;
                  this.update_diary();
              } else {
                  this.$emit("idle");
