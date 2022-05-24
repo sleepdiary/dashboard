@@ -844,6 +844,7 @@
          this.update_settings();
          diary_manager.on_init( () => {
              if ( diary_manager.get_diaries().length ) {
+                 this.timezone = diary_manager.force_timezone() || this.timezone;
                  this.update_diary();
              } else {
                  this.$emit("idle");
