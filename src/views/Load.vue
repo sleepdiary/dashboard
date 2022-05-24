@@ -99,8 +99,15 @@
 
                 <v-card-actions>
                     <v-btn
+                        width="50%"
+                        text
+                        href="/resources/common_sleep_diaries"
+                    >
+                        Learn more
+                    </v-btn>
+                    <v-btn
                         color="primary"
-                        width="100%"
+                        width="50%"
                         text
                         @click="demo_popup = false"
                     >
