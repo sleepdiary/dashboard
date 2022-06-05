@@ -92,6 +92,10 @@ function calculate_info() {
             postMessage([0,80]);
             response.push( self.sleep_chart(long_term_graph,sleep_chart_theme,!start,timezone) );
 
+            postMessage([0,90]);
+
+            response.push( diary.latest_daytime_midpoint() );
+
         }
 
         postMessage([0,95]);
