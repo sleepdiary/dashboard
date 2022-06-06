@@ -243,20 +243,81 @@
 
                                     </template>
 
+                                    <v-slide-x-transition>
+                                        <tr
+                                          v-show="statistics_options.includes('infos')&&stats_info=='tz'"
+                                          @click="toggle_stats_info('tz')"
+                                          class="stats-below"
+                                        >
+                                            <td
+                                              colspan="8"
+                                              style="text-align:right"
+                                            >
+                                                <template v-if="manual_timezone_required">
+                                                    When you wrote <em>00:00</em> in your diary, where did you mean?<br/>
+                                                    It's always midnight somewhere.
+                                                </template>
+                                                <template v-else>
+                                                    Your diary includes the timezone information we need.<br/>
+                                                    This is <span style="opacity:0.5">grey</span> because you don't need to do anything about it.
+                                                </template>
+                                            </td>
+                                        </tr>
+                                    </v-slide-x-transition>
+                                    <v-slide-x-transition>
+                                        <tr
+                                          v-show="statistics_options.includes('infos')&&stats_info=='tz'"
+                                          @click="toggle_stats_info('tz')"
+                                          class="stats-arrows"
+                                        >
+                                            <td></td>
+                                            <td colspan="6" class="stats-plus-minus"><v-icon small>mdi-arrow-down-bold</v-icon></td>
+                                            <td></td>
+                                        </tr>
+                                    </v-slide-x-transition>
                                     <tr
                                       @click="toggle_stats_info('tz')"
                                     >
-                                        <th>Timezone</th>
-                                        <td @click.stop :colspan="6">
-                                            <v-autocomplete v-model="timezone" :items="timezones"/>
-                                        </td>
-                                        <td class="hpad-unless-narrow" v-if="statistics_options.includes('infos')">
+                                        <th style="height:0;border:none"></th>
+                                        <td style="height:0;border:none" colspan="6"></td>
+                                        <td rowspan="3" class="hpad-unless-narrow" v-if="statistics_options.includes('infos')">
                                             <v-btn icon>
                                                 <v-icon>mdi-information</v-icon>
                                             </v-btn>
                                         </td>
                                     </tr>
-                                    <v-slide-y-transition>
+                                    <tr
+                                      @click="toggle_stats_info('tz')"
+                                      :style="manual_timezone_required?'':'opacity:0.5'"
+                                    >
+                                        <th style="border-bottom:none">Diary timezone</th>
+                                        <td style="border-bottom:none" @click.stop :colspan="6">
+                                            <v-autocomplete
+                                              v-if="manual_timezone_required"
+                                              v-model="diary_timezone"
+                                              :items="timezones"
+                                              :rules="timezone_rules"
+                                            />
+                                            <template v-else>
+                                                (diary entries already include timezones)
+                                            </template>
+                                        </td>
+                                    </tr>
+
+                                    <tr
+                                      @click="toggle_stats_info('diary_tz')"
+                                    >
+                                        <th>Display timezone</th>
+                                        <td @click.stop :colspan="6">
+                                            <v-autocomplete
+                                              v-model="display_timezone"
+                                              :items="timezones"
+                                              :rules="timezone_rules"
+                                            />
+                                        </td>
+                                    </tr>
+
+                                    <v-slide-x-reverse-transition>
                                         <tr
                                           v-show="statistics_options.includes('infos')&&stats_info=='tz'"
                                           @click="toggle_stats_info('tz')"
@@ -266,8 +327,8 @@
                                             <td class="stats-plus-minus" colspan="6"><v-icon small>mdi-arrow-up-bold</v-icon></td>
                                             <td></td>
                                         </tr>
-                                    </v-slide-y-transition>
-                                    <v-slide-y-transition>
+                                    </v-slide-x-reverse-transition>
+                                    <v-slide-x-reverse-transition>
                                         <tr
                                           v-show="statistics_options.includes('infos')&&stats_info=='tz'"
                                           @click="toggle_stats_info('tz')"
@@ -275,11 +336,11 @@
                                             <td
                                               colspan="8"
                                             >
-                                                We guess your <a @click.stop href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones">tz database timezone</a> from your diary and browser timezones.<br/>
-                                                If your diary doesn't have timezones, consider using <em>Etc/GMT</em> .
+                                                Times on this page are displayed in this timezone.<br/>
+                                                You can use any <a @click.stop href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones">tz database timezone</a>.
                                             </td>
                                         </tr>
-                                    </v-slide-y-transition>
+                                    </v-slide-x-reverse-transition>
 
                                 </tbody>
                             </template>
@@ -854,8 +915,20 @@
      name: 'Info',
 
      data: () => ({
-         timezone: new Intl.DateTimeFormat().resolvedOptions().timeZone,
+         display_timezone: new Intl.DateTimeFormat().resolvedOptions().timeZone,
+         diary_timezone: new Intl.DateTimeFormat().resolvedOptions().timeZone,
          timezones: [ new Intl.DateTimeFormat().resolvedOptions().timeZone ],
+         timezone_rules: [
+           tz => {
+             try {
+               window.tc.zone(tz);
+               return true;
+             } catch (e) {
+               return false;
+             }
+           }
+         ],
+         manual_timezone_required: false,
          //recent: {}, // NO!  Making this reactive takes a long time, for no benefit
          recent_began: '',
          //long_term: {}, // NO!  Making this reactive takes a long time, for no benefit
@@ -932,6 +1005,11 @@
                      this.chart_svg        = [ data[7], data[8] ];
 
                      this.prediction_midpoint = data[9];
+
+                     if ( data[10] && !this.manual_timezone_required ) {
+                         this.manual_timezone_required = true;
+                         this.update_settings(this.diary_timezone);
+                     }
 
                      this.   recent_began = this.recent   .activities[0].id.split("T")[0];
                      this.long_term_began = this.long_term.activities[0].id.split("T")[0];
@@ -1015,7 +1093,6 @@
          this.update_settings();
          diary_manager.on_init( () => {
              if ( diary_manager.get_diaries().length ) {
-                 this.timezone = diary_manager.force_timezone() || this.timezone;
                  this.update_diary();
              } else {
                  this.$emit("idle");
@@ -1025,7 +1102,8 @@
      },
 
      watch: {
-         timezone           () { this.update_settings(); this.update_prediction(); },
+         display_timezone   () { this.update_settings(); this.update_prediction(); },
+         diary_timezone     () { this.update_settings(this.diary_timezone); },
          sleep_chart_theme  () { this.update_settings(); },
          sleep_chart_start  () { this.update_settings(); },
          sleep_chart_reverse() { this.update_settings(); },
@@ -1062,7 +1140,7 @@
                      minute: 'numeric',
                      second: 'numeric',
                      dayPeriod: 'long',
-                     timeZone : this.timezone
+                     timeZone : this.display_timezone
                  }
              ).format(time));
          },
@@ -1090,7 +1168,7 @@
 
              const report = window.sleepdiary_report({
                  pdf: new window.jspdf.jsPDF(),
-                 timezone: this.timezone,
+                 timezone: this.display_timezone,
                  software_version: this.software_version,
                  recent: this.recent,
                  long_term: this.long_term,
@@ -1274,11 +1352,12 @@
              }
          },
 
-         update_settings() {
+         update_settings(diary_timezone) {
              this.$emit("busy");
              this.worker.postMessage([
-                 'settings',
-                 this.timezone,
+                 "settings",
+                 diary_timezone,
+                 this.display_timezone,
                  this.sleep_chart_theme,
                  this.sleep_chart_start,
                  this.sleep_chart_reverse,
@@ -1292,7 +1371,7 @@
            new window.tc.DateTime(
              this.prediction_midpoint,
              window.tc.zone("Etc/UTC")
-           ).toZone(window.tc.zone(this.timezone))
+           ).toZone(window.tc.zone(this.display_timezone))
          );
          this.prediction_date = (
            m.year() + '-' +
@@ -1332,7 +1411,7 @@
                parseInt(time[1],10),
                0, // second
                0, // millisecond
-               window.tc.zone(this.timezone),
+               window.tc.zone(this.display_timezone),
              ).add( new window.tc.Duration( duration * count ) )
              .format("EEE, dd MMM yyyy HH:mm:ss")
            );
