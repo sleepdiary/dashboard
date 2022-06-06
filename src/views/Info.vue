@@ -288,6 +288,156 @@
                     </v-list-item-content>
                 </v-list-item>
 
+                <v-subheader v-if="predictable">
+                    Predict your daytime
+                    <v-spacer></v-spacer>
+                </v-subheader>
+
+                <v-list-item v-if="predictable">
+                    <v-list-item-content>
+
+                        <div class="mb-4">
+                            When are you likely to be awake for an upcoming appointment?
+                            The middle of your latest daytime was <em>{{prediction_midpoint_str}}</em> and your average day length is <em>{{to_duration(long_term.summary_days.average)}}</em>, so...</div>
+
+                        <div>
+
+                            <v-row>
+                                <v-col cols="1"></v-col>
+                                <v-col cols="5">
+                                    <v-menu
+                                      ref="prediction_date_menu"
+                                      v-model="prediction_date_menu"
+                                      :close-on-content-click="false"
+                                      :return-value.sync="prediction_date"
+                                      transition="scale-transition"
+                                      offset-y
+                                      min-width="auto"
+                                    >
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <v-text-field
+                                              v-model="prediction_date"
+                                              class="pt-0"
+                                              prepend-icon="mdi-calendar"
+                                              label="Start from"
+                                              hide-details
+                                              readonly
+                                              v-bind="attrs"
+                                              v-on="on"
+                                            ></v-text-field>
+                                        </template>
+                                        <v-date-picker
+                                          v-model="prediction_date"
+                                          no-title
+                                          scrollable
+                                        >
+                                            <v-spacer></v-spacer>
+                                            <v-btn
+                                              text
+                                              color="primary"
+                                              @click="prediction_date_menu = false"
+                                            >
+                                                Cancel
+                                            </v-btn>
+                                            <v-btn
+                                              text
+                                              color="primary"
+                                              @click="$refs.prediction_date_menu.save(prediction_date)"
+                                            >
+                                                OK
+                                            </v-btn>
+                                        </v-date-picker>
+                                    </v-menu>
+                                </v-col>
+                                <v-col cols="1" style="margin:auto;text-align:center">at</v-col>
+                                <v-col cols="5">
+                                    <v-menu
+                                      ref="prediction_time_menu"
+                                      v-model="prediction_time_menu"
+                                      :close-on-content-click="false"
+                                      :return-value.sync="prediction_time"
+                                      transition="scale-transition"
+                                      offset-y
+                                      min-width="auto"
+                                      @input="value => reset_time_picker(value,$refs.prediction_time)"
+                                    >
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <v-text-field
+                                              v-model="prediction_time"
+                                              class="pt-0"
+                                              prepend-icon="mdi-clock"
+                                              label="time"
+                                              hide-details
+                                              readonly
+                                              v-bind="attrs"
+                                              v-on="on"
+                                            ></v-text-field>
+                                        </template>
+                                        <v-time-picker
+                                          v-model="prediction_time"
+                                          ref="prediction_time"
+                                          no-title
+                                          scrollable
+                                        >
+                                            <v-spacer></v-spacer>
+                                            <v-btn
+                                              text
+                                              color="primary"
+                                              @click="prediction_time_menu = false"
+                                            >
+                                                Cancel
+                                            </v-btn>
+                                            <v-btn
+                                              text
+                                              color="primary"
+                                              @click="$refs.prediction_time_menu.save(prediction_time)"
+                                            >
+                                                OK
+                                            </v-btn>
+                                        </v-time-picker>
+                                    </v-menu>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="1" style="margin:auto;font-size:larger">+</v-col>
+                                <v-col cols="5">
+                                    <v-text-field
+                                      v-model="prediction_count"
+                                      prepend-icon="mdi-counter"
+                                      label="days"
+                                      class="pt-0"
+                                      hide-details
+                                      type="number"
+                                    />
+                                </v-col>
+                                <v-col cols="1" style="margin:auto;text-align:center;font-size:larger">×</v-col>
+                                <v-col cols="5">
+                                    <v-text-field
+                                      v-model="prediction_duration"
+                                      prepend-icon="mdi-timer"
+                                      label="day length"
+                                      class="pt-0"
+                                      hide-details
+                                      :rules="[ v => /^[0-9]+:[0-9]+(?::[0-9]+)?$/.test(v) ]"
+                                    />
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="1" style="font-size:larger">=</v-col>
+                                <v-col cols="11" id="prediction-result">{{prediction_result}}</v-col>
+                            </v-row>
+
+                            <v-row>
+                                <v-col cols="12">
+                                    ... or build your own prediction model with <a href="#generate-predictions" @click.prevent="generate_predictions()">a&nbsp;sleep&nbsp;spreadsheet</a>.
+                                </v-col>
+                            </v-row>
+
+                        </div>
+
+                    </v-list-item-content>
+                </v-list-item>
+
                 <v-list-item-group>
 
                     <v-subheader>
@@ -682,6 +832,14 @@
      font-style: italic;
      white-space: nowrap;
  }
+
+ #prediction-result {
+     text-align:right;
+     border-bottom: thin solid rgba(0, 0, 0, 0.7);
+ }
+ .theme--dark #prediction-result {
+     border-bottom-color: rgba(255, 255, 255, 0.7);
+ }
 </style>
 
 <script>
@@ -707,6 +865,14 @@
          update_timeout: null,
          latest_primary_sleep: [],
          schedule_list: [],
+         prediction_midpoint: 0,
+         prediction_midpoint_str: '',
+         prediction_date_menu: false,
+         prediction_time_menu: false,
+         prediction_date: '',
+         prediction_time: '',
+         prediction_duration: "",
+         prediction_count: 7,
          chart_svg: ['',''],
          event_svg: '',
          dialog_svg: [ '', '' ],
@@ -764,6 +930,8 @@
                      this.event_svg        = data[5];
                      this.patterns         = data[6];
                      this.chart_svg        = [ data[7], data[8] ];
+
+                     this.prediction_midpoint = data[9];
 
                      this.   recent_began = this.recent   .activities[0].id.split("T")[0];
                      this.long_term_began = this.long_term.activities[0].id.split("T")[0];
@@ -832,6 +1000,9 @@
                          ],
                      ];
 
+                     this.update_prediction();
+                     this.prediction_duration = this.to_duration(this.long_term.summary_days.average);
+
                      this.$emit("idle");
 
                      break;
@@ -854,7 +1025,7 @@
      },
 
      watch: {
-         timezone           () { this.update_settings(); },
+         timezone           () { this.update_settings(); this.update_prediction(); },
          sleep_chart_theme  () { this.update_settings(); },
          sleep_chart_start  () { this.update_settings(); },
          sleep_chart_reverse() { this.update_settings(); },
@@ -873,6 +1044,10 @@
              } else {
                  this.stats_info = schedules;
              }
+         },
+
+         reset_time_picker(value,input) {
+             if ( value && input ) input.selectingHour = true;
          },
 
          fix_timezone(time) {
@@ -1112,6 +1287,56 @@
              ]);
          },
 
+       update_prediction() {
+         const m = (
+           new window.tc.DateTime(
+             this.prediction_midpoint,
+             window.tc.zone("Etc/UTC")
+           ).toZone(window.tc.zone(this.timezone))
+         );
+         this.prediction_date = (
+           m.year() + '-' +
+           ( m.month()<10 ? '0' : '' ) +
+           m.month() + '-' +
+           ( m.day()<10 ? '0' : '' ) +
+           m.day()
+         );
+         this.prediction_time = (
+           m.hour() + ':' +
+           ( m.minute()<10 ? '0' : '' ) +
+           m.minute()
+         );
+         this.prediction_midpoint_str = this.prediction_date + ', ' + this.prediction_time;
+       },
+
+     },
+
+     computed: {
+         predictable() {
+             return this.schedule_list[1] && this.schedule_list[2] && this.schedule_list[3] && !this.schedule_list[3][6] && this.prediction_midpoint;
+         },
+         prediction_result() {
+             const date = this.prediction_date.split('-'),
+                   time = this.prediction_time.split(':'),
+                   duration_a = this.prediction_duration.split(':').map( v => parseInt(v,10) ),
+                   duration = ( ( duration_a[0] * 60 + duration_a[1] ) * 60 + (duration_a[2]||0) ) * 1000,
+                   count = parseInt(this.prediction_count,10)
+           ;
+
+           return (
+             new window.tc.DateTime(
+               parseInt(date[0],10),
+               parseInt(date[1],10),
+               parseInt(date[2],10),
+               parseInt(time[0],10),
+               parseInt(time[1],10),
+               0, // second
+               0, // millisecond
+               window.tc.zone(this.timezone),
+             ).add( new window.tc.Duration( duration * count ) )
+             .format("EEE, dd MMM yyyy HH:mm:ss")
+           );
+         },
      },
 
  }
