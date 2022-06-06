@@ -216,7 +216,11 @@ export default {
          },
          get_last_update(diary) {
              const records = diary.to("Standard").records;
-             return records.length ? new Date(records[records.length-1].end||records[records.length-1].start).toISOString().split("T")[0] : "(never)"
+             for ( let n=records.length-1; n>=0; --n ) {
+                 const ret = records[n].end||records[n].start;
+                 if ( ret ) return new Date().toISOString().split("T")[0];
+             }
+             return "(never)";
          },
          remove_diary(id) {
              diary_manager.remove_diary(id);

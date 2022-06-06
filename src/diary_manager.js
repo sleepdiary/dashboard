@@ -77,8 +77,7 @@ let session_storage = (() => {
             }
         },
         1, // parse each URL hash once, but not when the user clicks "back"
-    ),
-    forced_timezone = 0
+    )
 ;
 
 if ( diary_strings.length ) {
@@ -111,14 +110,12 @@ export default {
         permanent_callbacks[key] = cb;
     },
     add_diaries(event) {
-        forced_timezone = 0;
         awaiting_files = event.target.files;
         current_file = awaiting_files[0];
         awaiting_index = 1;
         diary_loader.load([current_file]);
     },
     add_demo(filename) {
-        forced_timezone = 'Etc/GMT';
         fetch(filename)
             .then( r => r.text() )
             // trim the diary to an amount that doesn't intimidate new users:
@@ -143,8 +140,4 @@ export default {
     clear() {
         session_storage.removeItem('dashboard.diary');
     },
-    force_timezone() {
-        return forced_timezone;
-    },
-
 };
