@@ -1090,7 +1090,7 @@
                        );
                }
              } else {
-               prefix += 'always exactly\u00A0<span class="stats-amount">';
+               prefix += ' always exactly\u00A0<span class="stats-amount">';
                if ( schedules[2] ) {
                  return prefix + this.to_duration_long(schedules[offset].mean) + '</span>.' + suffix;
                } else {
