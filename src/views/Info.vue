@@ -987,7 +987,7 @@
                      && long_term && Math.abs( long_term.average - expected ) <= range
                  ),
                  too_varied = ( recent, long_term ) => (
-                     true
+                     long_term
                      && long_term.standard_deviation > 5*60*60*1000
                  )
              ;
@@ -1079,7 +1079,7 @@
                      ];
 
                      this.update_prediction();
-                     this.prediction_duration = this.to_duration(this.long_term.summary_days.average);
+                     this.prediction_duration = this.to_duration((this.long_term.summary_days||{}).average);
 
                      this.$emit("idle");
 
@@ -1367,25 +1367,27 @@
          },
 
        update_prediction() {
-         const m = (
-           new window.tc.DateTime(
-             this.prediction_midpoint,
-             window.tc.zone("Etc/UTC")
-           ).toZone(window.tc.zone(this.display_timezone))
-         );
-         this.prediction_date = (
-           m.year() + '-' +
-           ( m.month()<10 ? '0' : '' ) +
-           m.month() + '-' +
-           ( m.day()<10 ? '0' : '' ) +
-           m.day()
-         );
-         this.prediction_time = (
-           m.hour() + ':' +
-           ( m.minute()<10 ? '0' : '' ) +
-           m.minute()
-         );
-         this.prediction_midpoint_str = this.prediction_date + ', ' + this.prediction_time;
+         if ( this.prediction_midpoint ) {
+           const m = (
+             new window.tc.DateTime(
+               this.prediction_midpoint,
+               window.tc.zone("Etc/UTC")
+             ).toZone(window.tc.zone(this.display_timezone))
+           );
+           this.prediction_date = (
+             m.year() + '-' +
+             ( m.month()<10 ? '0' : '' ) +
+             m.month() + '-' +
+             ( m.day()<10 ? '0' : '' ) +
+             m.day()
+           );
+           this.prediction_time = (
+             m.hour() + ':' +
+             ( m.minute()<10 ? '0' : '' ) +
+             m.minute()
+           );
+           this.prediction_midpoint_str = this.prediction_date + ', ' + this.prediction_time;
+         }
        },
 
      },
