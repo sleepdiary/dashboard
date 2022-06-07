@@ -136,8 +136,15 @@
 
                 <v-card-actions>
                     <v-btn
+                        width="50%"
+                        text
+                        href="/docs/create/formats"
+                    >
+                        Learn more
+                    </v-btn>
+                    <v-btn
                         color="primary"
-                        width="100%"
+                        width="50%"
                         text
                         @click="error = false"
                     >
