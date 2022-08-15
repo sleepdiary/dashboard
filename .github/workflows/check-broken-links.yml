@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check
-        uses: ruzickap/action-my-broken-link-checker@v2.2.7
+        uses: ruzickap/action-my-broken-link-checker@v2.2.8
         with:
           url: https://sleepdiary.github.io/dashboard/
           cmd_params: "--one-page-only --color=always"
